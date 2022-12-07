@@ -1,0 +1,398 @@
+<Project>
+  <Name>SportsRoom</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>UML</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Messenger</Name>
+        <Access>Public</Access>
+        <Location left="622" top="485" />
+        <Size width="219" height="200" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private JChannel superGroup</Member>
+        <Member type="Field">private Storage chatStorage</Member>
+        <Member type="Field">private ArrayList&lt;User&gt; users</Member>
+        <Member type="Field">private ArrayList&lt;ChatMessage&gt; message</Member>
+        <Member type="Method">public unclear synchronizeHistory()</Member>
+        <Member type="Method">public unclear sendMessage()</Member>
+        <Member type="Method">private unclear createSuperGroup()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Storage</Name>
+        <Access>Public</Access>
+        <Location left="861" top="127" />
+        <Size width="372" height="230" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Arraylist&lt;ChatMessage&gt; messages</Member>
+        <Member type="Field">private File messageFile</Member>
+        <Member type="Field">private File groupInfo</Member>
+        <Member type="Method">public void addMessages(ArrayList&lt;ChatMessage&gt; newMessages)</Member>
+        <Member type="Method">public ArrayList&lt;ChatMessage&gt; getMessages(int amount)</Member>
+        <Member type="Method">public ArrayList&lt;ChatMessage&gt; getMessages(LocalDateTime startingTime)</Member>
+        <Member type="Method">public long getSharedKey()</Member>
+        <Member type="Method">public void setSharedKey(long sharedKey)</Member>
+        <Member type="Method">public ArrayList&lt;User&gt; getUsers()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ChatMessage</Name>
+        <Access>Public</Access>
+        <Location left="923" top="773" />
+        <Size width="227" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private LocalDateTime date</Member>
+        <Member type="Field">private User user</Member>
+        <Member type="Field">private String content</Member>
+        <Member type="Method">public LocalDateTime getDate()</Member>
+        <Member type="Method">public User getUser()</Member>
+        <Member type="Method">public String getContent()</Member>
+        <Member type="Method">public void setContent(String content)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>User</Name>
+        <Access>Public</Access>
+        <Location left="1339" top="827" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String name</Member>
+        <Member type="Field">private String ip</Member>
+        <Member type="Field">private int role</Member>
+        <Member type="Method">public String getUsername()</Member>
+        <Member type="Method">public String getIP()</Member>
+        <Member type="Method">public int getRole()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Stats</Name>
+        <Access>Public</Access>
+        <Location left="633" top="1426" />
+        <Size width="219" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static double getPts(int playerID)</Member>
+        <Member type="Method">public static String getTeam(int playerID)</Member>
+        <Member type="Method">public static String getGameState(int gameID)</Member>
+        <Member type="Method">public static String getGameScore(int gameID)</Member>
+        <Member type="Method">public static String getWinner(int gameID)</Member>
+        <Modifier>Static</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Parser</Name>
+        <Access>Public</Access>
+        <Location left="633" top="1269" />
+        <Size width="188" height="96" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public String parse(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NewsArticle</Name>
+        <Access>Public</Access>
+        <Location left="377" top="1148" />
+        <Size width="198" height="196" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String name</Member>
+        <Member type="Field">private String content</Member>
+        <Member type="Field">private LocalDateTime dateOfPublish</Member>
+        <Member type="Method">public String getName()</Member>
+        <Member type="Method">public String getContent()</Member>
+        <Member type="Method">public LocalDateTime getDate()</Member>
+        <Member type="Method">public String toString()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>News</Name>
+        <Access>Public</Access>
+        <Location left="351" top="862" />
+        <Size width="198" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ArrayList&lt;NewsArticle&gt; news</Member>
+        <Member type="Method">private void addArticle(NewsArticle n)</Member>
+        <Member type="Method">public String getAllNews()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LoginWindow</Name>
+        <Access>Public</Access>
+        <Location left="404" top="647" />
+        <Size width="162" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MainWindow</Name>
+        <Access>Public</Access>
+        <Location left="646" top="900" />
+        <Size width="162" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int newField</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Encryption</Name>
+        <Access>Public</Access>
+        <Location left="288" top="437" />
+        <Size width="293" height="148" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public String Encrypt(String message, long sharedKey)</Member>
+        <Member type="Method">public String Decrypt(String message, long sharedKey)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>EncryptionInitiator</Name>
+        <Access>Public</Access>
+        <Location left="564" top="196" />
+        <Size width="211" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private static long publicKey</Member>
+        <Member type="Field">private static long privateKey</Member>
+        <Member type="Method">public long CreateSharedKey()</Member>
+        <Member type="Method">private long getRandomPrimeNumber()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>InitiationProtocolMessage</Name>
+        <Access>Public</Access>
+        <Location left="998" top="617" />
+        <Size width="211" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String groupName</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SynchronizationProtocolMessage</Name>
+        <Access>Public</Access>
+        <Location left="998" top="1029" />
+        <Size width="273" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private LocalDateTime date</Member>
+        <Member type="Field">private boolean isRequest</Member>
+        <Member type="Field">private ChatMessage[] messages</Member>
+        <Member type="Field">private String groupName</Member>
+        <Member type="Method">public LocalDateTime getDate()</Member>
+        <Member type="Method">public boolean isRequest()</Member>
+        <Member type="Method">public ChatMessage[] getMessages()</Member>
+        <Member type="Method">public String getGroupName()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>This class will be the first message sent to initiate a super group</Text>
+        <Location left="1268" top="631" />
+        <Size width="160" height="75" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>- This class will be the core of the synchronization process between different users. 
+- The property date is the date of the last message sent in the group with the name groupName.
+- If isRequest is true message is interpreted as a synchronization request, otherwise it will be interpreted as the chat history message required for synchronization.
+</Text>
+        <Location left="1076" top="1448" />
+        <Size width="198" height="186" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>- Role will indicate whether the user is a moderator, writer or viewer</Text>
+        <Location left="1339" top="1131" />
+        <Size width="160" height="92" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>This class makes the necessary handshake in order to start the encrypted communication</Text>
+        <Location left="663" top="70" />
+        <Size width="160" height="75" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>This class takes a command keyword string and analyzes it to return a HTML string containing the requested statistics.</Text>
+        <Location left="923" top="1287" />
+        <Size width="180" height="93" />
+      </Entity>
+      <Entity type="Comment">
+        <Text>+ addMessages: merges given messages
+ with local messages, sorted by time
++  getMessages(int amount ): returns the requested amount of messages
++ getMessages(LocalDateTime startingTime): returns the messages sent after the given time</Text>
+        <Location left="1108" top="407" />
+        <Size width="235" height="118" />
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="1" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1027</X>
+          <Y>400</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>866</X>
+          <Y>535</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="10">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>597</X>
+          <Y>518</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Dependency" first="9" second="5">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>723</X>
+          <Y>1019</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>722</X>
+          <Y>1244</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Dependency" first="8" second="10">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Dependency" first="8" second="11">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>249</X>
+          <Y>689</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>615</X>
+          <Y>140</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Dependency" first="5" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="7" second="9">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="6" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="0" second="9">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="3" second="2">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="3" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1452</X>
+          <Y>639</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>890</X>
+          <Y>558</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="2" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>905</X>
+          <Y>748</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>882</X>
+          <Y>647</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="12">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1101</X>
+          <Y>592</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="13">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>836</X>
+          <Y>741</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>901</X>
+          <Y>1103</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Comment" first="14" second="12">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Comment" first="15" second="13">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1195</X>
+          <Y>1423</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1195</X>
+          <Y>1277</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Comment" first="16" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1442</X>
+          <Y>1106</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1442</X>
+          <Y>1104</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Comment" first="17" second="11">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Comment" first="18" second="5">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Comment" first="19" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1172</X>
+          <Y>382</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1172</X>
+          <Y>382</Y>
+        </BendPoint>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>
