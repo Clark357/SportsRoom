@@ -5,22 +5,39 @@ import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 
+enum Role{
+	WRITER,
+	MODERATOR,
+	READER
+}
+
 public class User {
 
+	public Role role;
 	private String name;
 	private String ip;
-	private int role;
+	
+
+	public User(String name, String ip) {
+
+		setName(name);
+		setIP(ip);
+		role = Role.READER;
+	}
 
 	public String getUsername() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return name;
 	}
 
 	public String getIP() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return ip;
 	}
 
-	public int getRole() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+	public void setName(String name) {
+		this.name = name; //TODO Change according to program requirements
 	}
 
+	public void setIP(String ip) {
+		this.ip = ip; //TODO Change according to program requirements
+	}
 }
