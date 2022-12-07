@@ -4,10 +4,11 @@ import java.io.*;
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
+import java.time.*;;
 
 public class Storage {
 
-	private Arraylist<ChatMessage> messages;
+	private ArrayList<ChatMessage> messages;
 	private File messageFile;
 	private File groupInfo;
 
