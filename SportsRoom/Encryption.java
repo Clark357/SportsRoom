@@ -1,4 +1,4 @@
-package SportsRoom.UML;
+package SportsRoom;
 
 import java.io.*;
 import java.util.*;
