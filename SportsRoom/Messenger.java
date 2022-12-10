@@ -1,5 +1,7 @@
 package SportsRoom;
 
+import org.jgroups.JChannel;
+
 import java.io.*;
 import java.util.*;
 import java.awt.*;
@@ -11,17 +13,25 @@ public class Messenger {
 	private Storage chatStorage;
 	private ArrayList<User> users;
 	private ArrayList<ChatMessage> message;
+	private MessengerListener listener;
 
-	public unclear synchronizeHistory() {
+	public Messenger(String groupName ,MessengerListener listener) {
+		this.listener = listener;
+	}
+
+	public void synchronizeHistory() {
 		throw new UnsupportedOperationException("The method is not implemented yet.");
 	}
 
-	public unclear sendMessage() {
+	public void sendMessage() {
 		throw new UnsupportedOperationException("The method is not implemented yet.");
 	}
 
-	private unclear createSuperGroup() {
+	private void createSuperGroup() {
 		throw new UnsupportedOperationException("The method is not implemented yet.");
 	}
 
+	public ArrayList<User> getUsers() {
+		return users;
+	}
 }

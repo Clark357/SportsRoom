@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class Parser {
 
-	public String parse(String message) {
+	public static String parse(String message) {
 		throw new UnsupportedOperationException("The method is not implemented yet.");
 	}
 

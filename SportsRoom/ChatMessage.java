@@ -12,20 +12,25 @@ public class ChatMessage {
 	private User user;
 	private String content;
 
+	public ChatMessage(LocalDateTime date, User user, String content) {
+		this.date = date;
+		this.user = user;
+		this.content = content;
+	}
+
 	public LocalDateTime getDate() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return date;
 	}
 
 	public User getUser() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return user;
 	}
 
 	public String getContent() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return content;
 	}
 
 	public void setContent(String content) {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		this.content = content;
 	}
-
 }
