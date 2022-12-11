@@ -1,0 +1,2 @@
+While distributing the workload, i take on the news part. while I help my friends with other parts I mainly deal with News part.
+This week i implemented the methods of News and NewsArticle class. However, News class is not done yet and the importNews() method which does most of the job is not complete yet because currently I am still trying to learn about HttpClient, JSON and API's. once the importNews() is done and I integrate the News with tha app client, News part will be finished. 
