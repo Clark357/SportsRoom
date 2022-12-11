@@ -1,0 +1,16 @@
+11.22.2022
+ALPER DURMUŞ
++ This week, I did not implement code but I did the necessary research for
+the encryotion algortihm. I will write the code for encryption and decryption next week.
+As we decided as a group couple of weeks ago, We create similar encryption algorithm similar to AES
+https://en.wikipedia.org/wiki/Advanced_Encryption_Standard (The wiki page of the algorithm)
+This algorithm uses a secret key to encrypt the data and the same secret key is used for decrypting it.
+But for security reasons we will not be able to send the secret key by networks. As a result we decided to write a secret key creator
+which is inspired from Diffie-Hellman Key Exchange.
+https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange (the Wiki page for the key exchange)
+Since we needed a safe way to create secret keys, we will implement the EncryptionInitiator Class in order to create secret keys safely.
+And as I said this will be inspired from Hellman Key Exchange.
+I spacifially researched and learned the mathematics of this stuff, because as it is indicated in the Detailed Design Report I & Mehmet Can
+Bıyık will be implementing this part of the program.
+
++ Also I created and pushed the necessary folders and placeholder files for logging our personal contributions to the SportsRoom Project. 
