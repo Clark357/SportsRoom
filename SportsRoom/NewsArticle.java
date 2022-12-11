@@ -1,31 +1,31 @@
 package SportsRoom;
-
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
 import java.time.*;
 
 public class NewsArticle {
 
 	private String name;
 	private String content;
-	private LocalDateTime dateOfPublish;
+	private LocalDate dateOfPublish;
+
+	public NewsArticle(String name, String content, LocalDate publishDate){
+		this.name = name;
+		this.content = content;
+		dateOfPublish = publishDate;
+	}
 
 	public String getName() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return name;
 	}
 
 	public String getContent() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return content;
 	}
 
-	public LocalDateTime getDate() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+	public LocalDate getDate() {
+		return dateOfPublish;
 	}
 
 	public String toString() {
-		throw new UnsupportedOperationException("The method is not implemented yet.");
+		return name + "\n" + "Published on: " + dateOfPublish + "\n" + content;
 	}
-
 }
