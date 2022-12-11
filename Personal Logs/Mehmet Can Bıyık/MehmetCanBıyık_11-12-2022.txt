@@ -1,0 +1,3 @@
+Week from 05/12/2022 to 11/12/2022
++ Started working on the GUI part of the project and finished the general functionality, but the menu bar still needs to be written. I plan to finalize the menu bar when the messenger class is finalized.
++ Wrote some interactions between the Messenger, Parser, ChatMessage classes, and the GUI. Since the overall functionality of these classes has yet to be finalized, the interactions between those classes and the GUI classes are a work in progress.
