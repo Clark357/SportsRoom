@@ -3,14 +3,14 @@ import java.time.*;
 
 public class NewsArticle {
 
-	private String name;
-	private String content;
-	private LocalDate dateOfPublish;
+	private String name, imgLink, permaLink, content, publishDate;
 
-	public NewsArticle(String name, String content, LocalDate publishDate){
+	public NewsArticle(String name, String content, String imgLink, String permaLink,String publishDate){
 		this.name = name;
 		this.content = content;
-		dateOfPublish = publishDate;
+		this.imgLink = imgLink;
+		this.permaLink = permaLink;
+		this.publishDate = publishDate;
 	}
 
 	public String getName() {
@@ -21,11 +21,11 @@ public class NewsArticle {
 		return content;
 	}
 
-	public LocalDate getDate() {
-		return dateOfPublish;
+	public String getDate() {
+		return publishDate;
 	}
 
 	public String toString() {
-		return name + "\n" + "Published on: " + dateOfPublish + "\n" + content;
+		return name + "\n" + "Published on: " + publishDate + "\n" + content;
 	}
 }
