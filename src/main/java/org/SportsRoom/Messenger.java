@@ -16,15 +16,21 @@ public class Messenger implements Receiver{
 	public void receive(Message msg) { //TODO: Check whether it works
 		if(msg.getObject() instanceof ChatMessage) { //TODO: Should be decrypted but for now there is no encryption
 			listener.eventHappened(msg.getObject());
+			chatStorage.addMessages(new ChatMessage[] {(ChatMessage) msg.getObject()});
 		} else if(msg.getObject() instanceof RoleUpdateProtocolMessage) {
 			users = new ArrayList<>(Arrays.asList(((RoleUpdateProtocolMessage)msg.getObject()).getUsers()));
+			chatStorage.updateUsers((User[])users.toArray());
 		} else if(msg.getObject() instanceof SynchronizationProtocolMessage) {
 			if(((SynchronizationProtocolMessage)msg.getObject()).isRequest())
-				superGroup.send(new ObjectMessage(msg.getSrc(), new SynchronizationProtocolMessage(LocalDateTime.now(),
-																							false,
-																									chatStorage.getMessages(((SynchronizationProtocolMessage)msg.getObject()).getDate()),
-																									(User[])chatStorage.getUsers().toArray(),
-																									superGroup.getClusterName())));
+				try {
+					superGroup.send(new ObjectMessage(msg.getSrc(), new SynchronizationProtocolMessage(LocalDateTime.now(),
+																								false,
+																										chatStorage.getMessages(((SynchronizationProtocolMessage)msg.getObject()).getDate()),
+																										(User[])chatStorage.getUsers().toArray(),
+																										superGroup.getClusterName())));
+				} catch(Exception e) {
+					System.err.println("Error: Could not send the requested synchronization history.");
+				}
 			else {
 				SynchronizationProtocolMessage history = (SynchronizationProtocolMessage) msg.getObject();
 				chatStorage.addMessages(history.getMessages());
@@ -52,8 +58,8 @@ public class Messenger implements Receiver{
 			listener.eventHappened(u);
 	}
 
-	public void synchronizeHistory() {
-		superGroup.send(new ObjectMessage(superGroup.getView().getMembers().get(0), new SynchronizationProtocolMessage(chatStorage.getMessages(1), true, null, null, superGroup.getClusterName())));
+	public void synchronizeHistory() throws Exception{
+		superGroup.send(new ObjectMessage(superGroup.getView().getMembers().get(0), new SynchronizationProtocolMessage(chatStorage.getMessages(1)[0].getDate(), true, null, null, superGroup.getClusterName())));
 	}
 
 	public void sendMessage(ChatMessage msg) throws Exception {
