@@ -24,8 +24,8 @@ public class User {
 		setIP(ip);
 		role = Role.READER;
 	}
-
-	public String getUsername() {
+	public User(){}
+	public String getName() {
 		return name;
 	}
 
@@ -39,5 +39,11 @@ public class User {
 
 	public void setIP(String ip) {
 		this.ip = ip; //TODO Change according to program requirements
+	}
+
+	@Override
+	public String toString() {
+		return 	role +": " + name + ", \'"
+				+ ip + '\'';
 	}
 }
