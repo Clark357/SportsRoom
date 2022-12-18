@@ -6,22 +6,35 @@ import java.time.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Storage {
-	private File groupInfo;//TODO will this be needed?
 	private final RandomAccessFile raf;
 	private static ObjectMapper mapper;
 	private boolean isInitialized;
 
 	/**
 	 * Constructs a storage with given fileName
-	 * @param filePath: path where the storage file exits or where it will be created
+	 * @param fileName: name of the storage file
 	 * @throws FileNotFoundException
 	 */
-	public Storage(String filePath) throws IOException {
+	public Storage(String fileName) throws IOException {
 		mapper = new ObjectMapper();
-		groupInfo = new File(filePath);
+		File groupInfo = new File("src\\data\\" + fileName + ".json");
 		isInitialized = !groupInfo.createNewFile(); //Checks if the storage already exists or is not
 		// yet initialized with initializeStorageFile()
 		raf = new RandomAccessFile(groupInfo, "rw");
+	}
+
+	/**
+	 *
+	 * @return A string array with the names of existing files in the data directory
+	 */
+	public String[] getChatNames(){
+		File parent = new File("src\\data");
+		String[] output = parent.list();
+
+		for (int i = 0; i < output.length; i++) {
+			output[i] = output[i].substring(0,output[i].length()-5);
+		}
+		return  output;
 	}
 
 	/**
@@ -52,7 +65,7 @@ public class Storage {
 	/**
 	 * Creates a new storage file with given users and shared key
 	 * @param sharedKey for encryption
-	 * @param users of the groupchat
+	 * @param users of the group chat
 	 * @throws IOException
 	 */
 	public void initializeStorageFile(Long sharedKey, User[] users) throws IOException {
