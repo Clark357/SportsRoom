@@ -81,7 +81,7 @@ public class MainWindow extends JFrame{
 			chatMessenger = new Messenger(groupName, new MessengerListener() {//TODO: Test whether this listener works
 				public void eventHappened(Object o) {
 					if(o instanceof User) {
-						UserList.add(new JLabel(((User)o).getUsername()));
+						UserList.add(new JLabel(((User)o).getName()));
 					} else if(o instanceof Integer) {
 						UserList.remove(((Integer)o));
 					} else if(o instanceof ChatMessage) {
@@ -108,7 +108,7 @@ public class MainWindow extends JFrame{
 
 			dateOfMessage = message.getDate().getYear() + "." + message.getDate().getMonthValue() + "." + message.getDate().getDayOfMonth()
 					+ " " + message.getDate().getHour() + ":" + String.format("%02d", message.getDate().getMinute());
-			chatText = chatText.substring(0, start + 1) + "\n<blockquote>\n" + message.getContent() + "\n</blockquote>\n<i>" + message.getUser().getUsername() + " - " + dateOfMessage + "</i>" + chatText.substring(end);
+			chatText = chatText.substring(0, start + 1) + "\n<blockquote>\n" + message.getContent() + "\n</blockquote>\n<i>" + message.getUser().getName() + " - " + dateOfMessage + "</i>" + chatText.substring(end);
 			ChatConversation.setText(chatText);
 		}
 

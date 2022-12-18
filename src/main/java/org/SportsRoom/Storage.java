@@ -4,24 +4,39 @@ import java.io.*;
 import java.util.*;
 import java.time.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class Storage {
-	private File groupInfo;//TODO will this be needed?
 	private final RandomAccessFile raf;
 	private static ObjectMapper mapper;
 	private boolean isInitialized;
 
 	/**
 	 * Constructs a storage with given fileName
-	 * @param filePath: path where the storage file exits or where it will be created
+	 * @param fileName: name of the storage file
 	 * @throws FileNotFoundException
 	 */
-	public Storage(String filePath) throws IOException {
+	public Storage(String fileName) throws IOException {
 		mapper = new ObjectMapper();
-		groupInfo = new File(filePath);
+		mapper.registerModule(new JavaTimeModule());// For serializing LocalDateTime variables
+		File groupInfo = new File("src/data/" + fileName + ".json");
 		isInitialized = !groupInfo.createNewFile(); //Checks if the storage already exists or is not
 		// yet initialized with initializeStorageFile()
 		raf = new RandomAccessFile(groupInfo, "rw");
+	}
+
+	/**
+	 *
+	 * @return A string array with the names of existing files in the data directory
+	 */
+	public String[] getChatNames(){
+		File parent = new File("src\\data");
+		String[] output = parent.list();
+
+		for (int i = 0; i < output.length; i++) {
+			output[i] = output[i].substring(0,output[i].length()-5);
+		}
+		return  output;
 	}
 
 	/**
@@ -38,8 +53,9 @@ public class Storage {
 		output = mergeMessages(localMessages, input);
 
 		if(output.length != 0){
-			raf.seek(raf.length() - 2);
-			for(int i = 0; i < output.length; i++){
+			raf.seek(raf.length());
+			raf.writeBytes("\n");
+			for(int i = 0; i < localMessages.length; i++){
 				getToLineStart();
 			}
 			for (ChatMessage chatMessage : output) {
@@ -52,16 +68,18 @@ public class Storage {
 	/**
 	 * Creates a new storage file with given users and shared key
 	 * @param sharedKey for encryption
-	 * @param users of the groupchat
+	 * @param users of the group chat
 	 * @throws IOException
 	 */
 	public void initializeStorageFile(Long sharedKey, User[] users) throws IOException {
+		if(isInitialized) return;
 		raf.seek(0);
 		raf.writeBytes(sharedKey + "\n");
 		for (User user : users) {
 			raf.writeBytes(mapper.writeValueAsString(user) + "\n");
 		}
 		raf.writeBytes("*****");
+		raf.writeBytes("\n" + mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0"), "This is the start of your conversation")));
 		isInitialized = true;
 	}
 
@@ -103,6 +121,8 @@ public class Storage {
 		index2 = 0;
 		output = new ChatMessage[arr1.length + arr2.length - 1];
 		if(output.length == 0) return output;
+		if (arr2.length == 0) return arr1;
+		if(arr1.length == 0) return arr2;
 
 		for(int i = 0; i < output.length; i++){
 			if(index2 == -1 || (index1 != -1 && arr1[index1].getDate().isBefore(arr2[index2].getDate()))){
@@ -205,4 +225,16 @@ public class Storage {
 	public boolean isInitialized() {
 		return isInitialized;
 	}
+
+	/**
+	 * Writes the given users into the storage file
+	 * @param users to be written, only the same amount of users as before
+	 * @throws IOException
+	 */
+	public void updateUsers(User[] users) throws IOException {
+		long key = getSharedKey();
+		isInitialized = false;
+		initializeStorageFile(key, users);
+	}
+	
 }
