@@ -11,13 +11,13 @@ enum Role{
 public class User implements Serializable {
 
 	public Role role;
-	private String name;
+	private String username;
 	private String address;
 	
 
-	public User(String name, String address, boolean canSubmit) {
+	public User(String username, String address, boolean canSubmit) {
 
-		setName(name);
+		setUsername(username);
 		setAddress(address);
 		if(canSubmit)
 			role = Role.WRITER;
@@ -26,7 +26,7 @@ public class User implements Serializable {
 	}
 	public User(){}
 	public String getUsername() {
-		return name;
+		return username;
 	}
 
 	public Role getRole() {
@@ -67,8 +67,8 @@ public class User implements Serializable {
 		}
 	}
 
-	public void setName(String name) {
-		this.name = name; //TODO Change according to program requirements
+	public void setUsername(String username) {
+		this.username = username; //TODO Change according to program requirements
 	}
 
 	public void setAddress(String address) {
@@ -77,7 +77,7 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return 	role +": " + name + ", \'"
+		return 	role +": " + username + ", '"
 				+ address + '\'';
 	}
 }
