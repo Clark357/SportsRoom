@@ -23,7 +23,15 @@
                 <constraints border-constraint="Center"/>
                 <properties/>
                 <border type="none"/>
-                <children/>
+                <children>
+                  <component id="dbedf" class="javax.swing.JTextPane" binding="NewsHTML">
+                    <constraints/>
+                    <properties>
+                      <contentType value="text/html"/>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                </children>
               </scrollpane>
             </children>
           </grid>

@@ -6,7 +6,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.time.*;
 
-public class ChatMessage {
+public class ChatMessage implements Serializable {
 
 	private LocalDateTime date;
 	private User user;

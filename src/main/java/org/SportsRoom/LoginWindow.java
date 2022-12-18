@@ -1,17 +1,28 @@
 package org.SportsRoom;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
 
 public class LoginWindow extends JFrame {
+    private LoginPage panel;
 
-    public LoginWindow(WindowListener wl) {
+    public LoginWindow(MainWindow w) {
         super("Login");
-        addWindowListener(wl);
-        setContentPane(new LoginPage().$$$getRootComponent$$$());
+
+        panel = new LoginPage();
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                if(!panel.loginButton.isEnabled()) {
+                    MetaSuperGroup.initMetaSuperGroup(panel.getUsername(), w);
+
+                    w.setVisible(true);
+                }else
+                    w.dispose();
+            }
+        });
+        setContentPane(panel.$$$getRootComponent$$$());
         setPreferredSize(new Dimension(400,300));
         SwingUtilities.updateComponentTreeUI(this);
         pack();
@@ -24,6 +35,7 @@ public class LoginWindow extends JFrame {
 
         dispose();
     }
+
     public class LoginPage {
         private JPanel panel1;
         private JTextField UsernameField;
@@ -39,6 +51,14 @@ public class LoginWindow extends JFrame {
                     }
                 }
             });
+        }
+
+        public String getUsername() {
+            return UsernameField.getText();
+        }
+
+        public String getPassword() {
+            return PasswordField.getText();
         }
 
         {

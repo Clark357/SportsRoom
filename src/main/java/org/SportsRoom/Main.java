@@ -10,8 +10,6 @@ public class Main {
             UIManager.setLookAndFeel("com.formdev.flatlaf.FlatLightLaf");
             MainWindow.MainMenu n = new MainWindow.MainMenu();
             MainWindow m = new MainWindow(n);
-            MainWindow.ChatPanel p = new MainWindow.ChatPanel("Hey hey", true);
-            n.addChatPanel(p);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
