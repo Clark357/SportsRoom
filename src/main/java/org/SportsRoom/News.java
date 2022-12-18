@@ -1,8 +1,8 @@
 package org.SportsRoom;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.*;
 
 import com.formdev.flatlaf.json.Json;
@@ -37,10 +37,10 @@ public class News {
 	public void importNews() {
 		try {
 			URL url = new URL("https://www.nba.com/news");
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.connect();
-			int responseCode = conn.getResponseCode();
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.connect();
+			int responseCode = con.getResponseCode();
 			if(responseCode != 200){
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
 			}
@@ -69,12 +69,32 @@ public class News {
 					NewsArticle article = new NewsArticle(name, content, imgLink, permaLink, publishDate);
 					addArticle(article);
 				}
+
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 
+	public String writeHtml() {
+		StringBuilder htmlString = new StringBuilder("<!DOCTYPE html>\n" +
+				"<html lang =\"en\">\n" +
+				"<head>\n" +
+				"<title>Latest NBA News</title>\n" +
+				"<body>\n" +
+				"<main>\n" +
+				"<h1>Latest NBA News<h1>\n");
+		for(int i = 0; i < news.size(); i++){
+			String section = "<section>\n"+
+					"<h2>" +  "<a target=\"_blank\" href=\""+ news.get(i).getPermaLink() + "\">" + news.get(i).getName() + "</a></h2>\n"+
+					"<p>" + news.get(i).getContent() + "<img src=\""+news.get(i).getImgLink()+"\"></p>\n"+
+					"</section>\n"
+					;
+			htmlString.append(section);
+		}
+		htmlString.append("</main>\n</body>\n</head>\n</html>");
+		return htmlString.toString();
+	}
+	
 }

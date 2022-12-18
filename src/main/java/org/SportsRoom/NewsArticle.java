@@ -25,6 +25,9 @@ public class NewsArticle {
 		return publishDate;
 	}
 
+	public String getPermaLink(){return permaLink;}
+
+	public String getImgLink(){return imgLink;}
 	public String toString() {
 		return name + "\n" + "Published on: " + publishDate + "\n" + content;
 	}
