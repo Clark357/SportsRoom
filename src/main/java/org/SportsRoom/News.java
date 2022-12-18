@@ -86,7 +86,7 @@ public class News {
 		for(int i = 0; i < news.size(); i++){
 			String section = "<table>\n" +
 					"<tr>\n" +
-					"<td><img src=\""+news.get(i).getImgLink()+"\" width=\"500\" height=\"300\"></td>\n" +
+					"<td><img src=\""+news.get(i).getImgLink()+"\" width=\"200\" height=\"120\"></td>\n" +
 					"<td style=\"font-family: system-ui\"><a target=\"_blank\" href=\""+ news.get(i).getPermaLink()+"\">" + news.get(i).getName() +
 					"</a><p>Published on:"+news.get(i).getDate()+"</p><p>"+ news.get(i).getContent() + "</p></td>"+
 					"</tr>\n</table>\n";
