@@ -22,9 +22,9 @@ public class Messenger implements Receiver{
 			if(((SynchronizationProtocolMessage)msg.getObject()).isRequest())
 				superGroup.send(new ObjectMessage(msg.getSrc(), new SynchronizationProtocolMessage(LocalDateTime.now(),
 																							false,
-																									chatStorage.getMessages(((SynchronizationProtocolMessage)msg.getObject()).getDate(),
+																									chatStorage.getMessages(((SynchronizationProtocolMessage)msg.getObject()).getDate()),
 																									(User[])chatStorage.getUsers().toArray(),
-																									superGroup.getClusterName()))));
+																									superGroup.getClusterName())));
 			else {
 				SynchronizationProtocolMessage history = (SynchronizationProtocolMessage) msg.getObject();
 				chatStorage.addMessages(history.getMessages());
