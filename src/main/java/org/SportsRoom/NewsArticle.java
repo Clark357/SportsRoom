@@ -10,7 +10,7 @@ public class NewsArticle {
 		this.content = content;
 		this.imgLink = imgLink;
 		this.permaLink = permaLink;
-		this.publishDate = publishDate;
+		this.publishDate = publishDate.substring(0,10);
 	}
 
 	public String getName() {
