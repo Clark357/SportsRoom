@@ -165,21 +165,27 @@ public class Storage {
 	public ChatMessage[] getMessages(int amount) {
 		if(!isInitialized) return null;
 		ChatMessage[] output;
-		output = new ChatMessage[amount];
-
+		String temp;
 		try {
 			raf.seek(raf.length() - 1);
 
 			for(int i = 0; i < amount; i++){
 				getToLineStart();
-
+				temp = raf.readLine();
+				if(temp.charAt(2) == '*') {
+					amount = i;
+					break; //TODO can we use break statements?
+				}
+				raf.seek(raf.getFilePointer() - temp.length() - 1);
 			}
+			output = new ChatMessage[amount];
 			for(int k = 0; k < amount; k++){
 				output[k] = mapper.readValue(raf.readLine(), ChatMessage.class);
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
+			output = new ChatMessage[amount];
 		}
 		return output;
 	}
