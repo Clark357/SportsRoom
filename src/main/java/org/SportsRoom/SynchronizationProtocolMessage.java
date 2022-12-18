@@ -1,9 +1,6 @@
 package org.SportsRoom;
 
 import java.io.*;
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
 import java.time.*;
 
 public class SynchronizationProtocolMessage implements Serializable{

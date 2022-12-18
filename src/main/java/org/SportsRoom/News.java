@@ -1,6 +1,5 @@
 package org.SportsRoom;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -11,9 +10,6 @@ import org.json.simple.parser.JSONParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
-
-import javax.print.DocFlavor;
 
 public class News {
 

@@ -2,8 +2,6 @@ package org.SportsRoom;
 
 import java.io.*;
 import java.util.*;
-import java.awt.*;
-import javax.swing.*;
 
 public class EncryptionInitiator {
 
@@ -25,7 +23,7 @@ public class EncryptionInitiator {
 		//TODO: Write the necessary code to obtain the Receiver's stage 1 result.
 		long receiverStg1;
 		return pow(receiverStg1,privateKey)%primes[0];
-
+        
 	}
 
 	private long[] getRandomPrimeNumberPair() throws FileNotFoundException {

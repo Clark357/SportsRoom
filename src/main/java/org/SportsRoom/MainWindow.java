@@ -71,7 +71,7 @@ public class MainWindow extends JFrame{
 		private News newsAggregator;
 		private ArrayList<ChatPanel> groups;
 
-		public MainMenu() {
+		public void initNews() {
 			newsAggregator = new News();
 			newsAggregator.importNews();
 			NewsHTML.setText(newsAggregator.writeHtml());

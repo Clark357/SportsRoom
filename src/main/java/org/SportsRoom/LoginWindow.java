@@ -18,6 +18,8 @@ public class LoginWindow extends JFrame {
                     MetaSuperGroup.initMetaSuperGroup(panel.getUsername(), w);
 
                     w.setVisible(true);
+                    w.getPanel().initNews();
+                    dispose();
                 }else
                     w.dispose();
             }

@@ -1,9 +1,6 @@
 package org.SportsRoom;
 
 import java.io.*;
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
 
 public class InitiationProtocolMessage implements Serializable{
 
