@@ -25,7 +25,7 @@ public class User implements Serializable {
 			role = Role.READER;
 	}
 	public User(){}
-	public String getName() {
+	public String getUsername() {
 		return name;
 	}
 
@@ -78,6 +78,6 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return 	role +": " + name + ", \'"
-				+ ip + '\'';
+				+ address + '\'';
 	}
 }
