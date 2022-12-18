@@ -5,13 +5,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
-import com.formdev.flatlaf.json.Json;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
@@ -77,7 +75,7 @@ public class News {
 		}
 	}
 
-	public String writeHtml() {
+	public String writeHtml(){
 		StringBuilder htmlString = new StringBuilder("<!DOCTYPE html>\n" +
 				"<html lang =\"en\">\n" +
 				"<head>\n" +
@@ -86,11 +84,12 @@ public class News {
 				"<main>\n" +
 				"<h1>Latest NBA News<h1>\n");
 		for(int i = 0; i < news.size(); i++){
-			String section = "<section>\n"+
-					"<h2>" +  "<a target=\"_blank\" href=\""+ news.get(i).getPermaLink() + "\">" + news.get(i).getName() + "</a></h2>\n"+
-					"<p>" + news.get(i).getContent() + "<img src=\""+news.get(i).getImgLink()+"\"></p>\n"+
-					"</section>\n"
-					;
+			String section = "<table>\n" +
+					"<tr>\n" +
+					"<td><img src=\""+news.get(i).getImgLink()+"\" width=\"500\" height=\"300\"></td>\n" +
+					"<td style=\"font-family: system-ui\"><a target=\"_blank\" href=\""+ news.get(i).getPermaLink()+"\">" + news.get(i).getName() +
+					"</a><p>Published on:"+news.get(i).getDate()+"</p><p>"+ news.get(i).getContent() + "</p></td>"+
+					"</tr>\n</table>\n";
 			htmlString.append(section);
 		}
 		htmlString.append("</main>\n</body>\n</head>\n</html>");
