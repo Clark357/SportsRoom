@@ -1,0 +1,7 @@
+19.12.2022
+ALPER DURMUŞ
+This week I completedd Encryption and Decryption. 
+Also I completed my part of Encryption Initiation.
+The only part left for initiation is the is the necessary messages to be sent and received.
+Other than that both ENcryption and its initiation is complete. Also the Encryption class is tested but unfortunately the initiator has not been tested,
+since the some of its parts is not complete.
