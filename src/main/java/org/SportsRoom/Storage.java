@@ -14,6 +14,7 @@ public class Storage {
 
 	/**
 	 * Constructs a storage with given fileName
+	 * If used for a new group, call initializeStorageFile() right after it
 	 * @param fileName: name of the storage file
 	 */
 	public Storage(String fileName) {
