@@ -5,6 +5,7 @@ import java.util.*;
 import java.time.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.jgroups.Message;
 
 public class Storage {
 	private RandomAccessFile raf;
@@ -32,14 +33,37 @@ public class Storage {
 
 	/**
 	 *
-	 * @return A string array with the names of existing files in the data directory
+	 * @return A string array with the names of existing files in the data directory that the user can decryption
 	 */
-	public String[] getChatNames(){
+	public ArrayList<String> getChatNames(long publicKey, long privateKey){
 		File parent = new File("src\\data");
-		String[] output = parent.list();
+		String[] allChats = parent.list();
+		ArrayList<String> output;
 
-		for (int i = 0; i < Objects.requireNonNull(output).length; i++) {
-			output[i] = output[i].substring(0,output[i].length()-5);
+		output = new ArrayList<>();
+
+		for (int i = 0; i < Objects.requireNonNull(allChats).length; i++) {
+			try {
+				RandomAccessFile r = new RandomAccessFile("src\\data\\" + allChats[i], "r");
+				String temp = r.readLine();
+				long key = Long.parseLong(Encryption.Decrypt(temp, ("" + publicKey + privateKey).hashCode()));
+
+				while(temp.charAt(0) != '*') {
+					temp = r.readLine();
+				}
+				temp = r.readLine(); // get the first (sample) message
+
+				ChatMessage auth = mapper.readValue(temp,ChatMessage.class);
+				if(Encryption.Decrypt(auth.getContent(), key).equals("This is the start of your conversation"))
+					output.add(allChats[i].substring(0, allChats[i].length() - 5));
+			} catch (FileNotFoundException e) {
+				System.err.println(e.getMessage());
+				System.exit(-1);
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				System.exit(-1);
+			}
+
 		}
 		return  output;
 	}
@@ -80,17 +104,21 @@ public class Storage {
 	 * @param sharedKey for encryption
 	 * @param users of the group chat
 	 */
-	public void initializeStorageFile(Long sharedKey, User[] users) {
+	public void initializeStorageFile(long sharedKey, long publicKey, long privateKey, User[] users) {
 		if(isInitialized) return;
 
+		String hash;
+		hash = "" + publicKey + privateKey;
 		try {
 			raf.seek(0);
-			raf.writeBytes(sharedKey + "\n");
+			raf.writeBytes(Encryption.Encrypt( "" + sharedKey, hash.hashCode()));
 			for (User user : users) {
 				raf.writeBytes(mapper.writeValueAsString(user) + "\n");
 			}
 			raf.writeBytes("*****");
-			raf.writeBytes("\n" + mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",true), "This is the start of your conversation")));
+			raf.writeBytes("\n" + mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"),
+					new User("SportsRoom", "0",true),
+					Encryption.Encrypt("This is the start of your conversation",sharedKey))));
 			isInitialized = true;
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -247,7 +275,7 @@ public class Storage {
 	 * Returns the shared encryption key
 	 * @return shared encryption key
 	 */
-	public long getSharedKey() {
+	public long getSharedKey(long publicKey, long privateKey) {
 		if(!isInitialized) return -1;
 
 		long key;
@@ -262,7 +290,9 @@ public class Storage {
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
-		return key;
+
+
+		return Long.parseLong(Encryption.Decrypt("" + key, ("" + publicKey + privateKey).hashCode()));
 	}
 
 	/**
@@ -277,10 +307,9 @@ public class Storage {
 	 * Writes the given users into the storage file
 	 * @param users to be written, only the same amount of users as before
 	 */
-	public void updateUsers(User[] users) {
-		long key = getSharedKey();
+	public void updateUsers(User[] users, long publicKey, long privateKey) {
+		long key = getSharedKey(publicKey, privateKey);
 		isInitialized = false;
-		initializeStorageFile(key, users);
+		initializeStorageFile(key, publicKey, privateKey, users);
 	}
-
 }
