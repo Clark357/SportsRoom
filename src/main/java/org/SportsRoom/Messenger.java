@@ -68,7 +68,7 @@ public class Messenger implements Receiver{
 
 		chatStorage = new Storage(groupName);
 		if(!chatStorage.isInitialized()) {
-			chatStorage.initializeStorageFile(-1, (long)MetaSuperGroup.username.hashCode(), (long)MetaSuperGroup.password.hashCode(), numOfUsers);
+			chatStorage.initializeStorageFile(-1, (long)MetaSuperGroup.username.hashCode(), (long)MetaSuperGroup.password.hashCode());
 		}
 
 		synchronizeHistory();

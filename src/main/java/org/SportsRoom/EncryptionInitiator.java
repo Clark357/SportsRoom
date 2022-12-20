@@ -49,7 +49,7 @@ public class EncryptionInitiator implements Receiver {
             if(keysReceived == numOfUsersCommunicating) {
                 listener.keyCreated(sharedKey);
                 Storage chatStorage = new Storage(channel.getClusterName());
-                chatStorage.initializeStorageFile(sharedKey, publicKey, privateKey, numOfActualUsers);
+                chatStorage.initializeStorageFile(sharedKey, publicKey, privateKey);
                 //TODO:Close the storage
                 channel.close();
             }
