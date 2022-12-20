@@ -114,11 +114,14 @@ public class Storage {
 		}
 		String hash;
 		hash = "" + publicKey + privateKey;
+		int hashKey = hash.hashCode();
+		if(hashKey < 0) hashKey *= -1;
+		hashKey %= 101;
 		try {
 			infoRaf.seek(0);
-			infoRaf.writeBytes(mapper.writeValueAsString(Encryption.Encrypt("" + sharedKey, hash.hashCode()))+ "\n");
+			infoRaf.writeBytes(mapper.writeValueAsString(Encryption.Encrypt("" + sharedKey, hashKey))+ "\n");
 			infoRaf.close();
-			raf.writeBytes(mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), Encryption.Encrypt("This is the start of your conversation",sharedKey))) + "\n*****");
+			raf.writeBytes(mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), Encryption.Encrypt("This is the start of your conversation",sharedKey))) + "\n*****\n");
 			isInitialized = true;
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -295,6 +298,9 @@ public class Storage {
 		String hash;
 
 		hash = "" + publicKey + privateKey;
+		int hashKey = hash.hashCode();
+		if(hashKey < 0) hashKey *= -1;
+		hashKey %= 101;
 		try {
 			infoRaf = new RandomAccessFile("src/info/" + fileName + "info.json", "rw");
 		} catch (FileNotFoundException e) {
@@ -305,7 +311,17 @@ public class Storage {
 		try {
 			infoRaf.seek(0);
 			String temp = infoRaf.readLine();
-			key = Long.parseLong(Encryption.Decrypt(mapper.readValue(temp.substring(0,temp.length()-1), String.class), hash.hashCode()));
+			String tempFixed = "";
+			for (int i = 1; i < temp.length() - 3; i++) {
+				if(temp.substring(i, i+2).equals('\\' + "n")){
+					tempFixed += "\n";
+					i++;
+				}
+				else {
+					tempFixed += temp.charAt(i) ;
+				}
+			}
+			key = Long.parseLong(Encryption.Decrypt(tempFixed +"\n", hashKey));
 			infoRaf.close();
 		} catch (IOException e) {
 			key = 0;
@@ -314,7 +330,7 @@ public class Storage {
 		}
 
 
-		return Long.parseLong(Encryption.Decrypt("" + key, ("" + publicKey + privateKey).hashCode()));
+		return key;
 	}
 
 	/**
