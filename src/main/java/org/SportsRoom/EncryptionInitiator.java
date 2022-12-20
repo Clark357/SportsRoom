@@ -1,30 +1,65 @@
 package org.SportsRoom;
 
+import org.jgroups.*;
+
 import java.io.*;
 import java.util.*;
 
-public class EncryptionInitiator {
+public class EncryptionInitiator implements Receiver {
 
 	private static long publicKey;
 	private static long privateKey;
+    private long sharedKey;
+    private long keysReceived;
+    private long[] primes;
+    private JChannel channel;
+    private int numOfUsersCommunicating;
+    private int numOfActualUsers;
+    private EncryptionInitiatorListener listener;
 
-	public long CreateSharedKey() throws FileNotFoundException {
-		long[] primes = new long[2];
-		primes = getRandomPrimeNumberPair();
-		//TODO: Write a line of code which transmitts the common primes.
-		//-----------------------------------------
-		//Example: Messenger.send(theReceiver,primes);
-		//-----------------------------------------
-		long stage1 = pow(primes[1],privateKey)%primes[0];
-		//TODO: Write a line of code which transmitts the stage 1 result of the Initiation.
-		//-----------------------------------------
-		//Example: Messenger.send(theReceiver,stage1);
-		//-------------------------------------------
-		//TODO: Write the necessary code to obtain the Receiver's stage 1 result.
-		long receiverStg1;
-		return pow(receiverStg1,privateKey)%primes[0];
-        
-	}
+    public EncryptionInitiator(String groupName, int numOfUsers, int numOfActualUsers, EncryptionInitiatorListener listener) throws Exception {
+        channel = new JChannel().connect(groupName).setDiscardOwnMessages(true);
+        keysReceived = 0;
+        this.listener = listener;
+        this.channel = channel;
+        this.primes = getRandomPrimeNumberPair();
+        this.numOfUsersCommunicating = numOfUsers;
+        this.numOfActualUsers = numOfActualUsers;
+    }
+
+    @Override
+    public void viewAccepted(View v) {
+        if(v.size() == numOfUsersCommunicating) {
+            try {
+                sharedKey = pow(primes[1],privateKey)%primes[0];
+                keysReceived = 1;
+                channel.send(new ObjectMessage(null, Long.valueOf(sharedKey)));
+            } catch (Exception e) {
+                System.err.println("Fatal error: Could not send the initialization message.");
+                System.exit(-1);
+            }
+        }
+    }
+
+    @Override
+    public void receive(Message msg) {
+        if(msg.getObject() instanceof Long) {
+            sharedKey = ( sharedKey * (Long)msg.getObject() ) % primes[0];
+            keysReceived++;
+            if(keysReceived == numOfUsersCommunicating) {
+                listener.keyCreated(sharedKey);
+                Storage chatStorage = new Storage(channel.getClusterName());
+                chatStorage.initializeStorageFile(sharedKey, publicKey, privateKey, numOfActualUsers);
+                //TODO:Close the storage
+                channel.close();
+            }
+        }
+    }
+
+    public void setPublicPrivateKey(long publicKeyGiven, long privateKeyGiven) {
+        publicKey = publicKeyGiven;
+        privateKey = privateKeyGiven;
+    }
 
 	private long[] getRandomPrimeNumberPair() throws FileNotFoundException {
 		File file = new File("../resources/Output.txt");

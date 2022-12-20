@@ -1,17 +1,22 @@
 package org.SportsRoom;
 
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class MainWindow extends JFrame{
 	private MainMenu panel;
+	private JMenuBar bar;
 	private JMenu leave;
 
 	public MainWindow() { //TODO: Test Whether this is the best way to construct the window
@@ -26,7 +31,7 @@ public class MainWindow extends JFrame{
 		SwingUtilities.updateComponentTreeUI(this);
 		pack();
 
-		JMenuBar bar = new JMenuBar();
+		bar = new JMenuBar();
 		JMenu edit = new JMenu("Edit");
 		leave = new JMenu("Leave Chats");
 		edit.add(new AbstractAction("Create New...") {
@@ -62,6 +67,10 @@ public class MainWindow extends JFrame{
 		return panel;
 	}
 
+	public JMenuBar getBar() {
+		return bar;
+	}
+
 	public static class MainMenu {
 
 		private JPanel panel1;
@@ -75,6 +84,16 @@ public class MainWindow extends JFrame{
 			newsAggregator = new News();
 			newsAggregator.importNews();
 			NewsHTML.setText(newsAggregator.writeHtml());
+			NewsHTML.addHyperlinkListener(new HyperlinkListener() {
+				public void hyperlinkUpdate(HyperlinkEvent e) {
+					if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+						try {
+							Desktop.getDesktop().browse(e.getURL().toURI());
+						} catch (URISyntaxException | IOException ex) {
+							System.err.println("Error: Could not open the link the user clicked.");
+						}
+				}
+			});
 		}
 
 		public void addChatPanel(ChatPanel panel) {
@@ -102,17 +121,17 @@ public class MainWindow extends JFrame{
 		private Timer updateTimer;
 		private Messenger chatMessenger;
 
-		public ChatPanel(String groupName ,boolean canSubmit, User u) {
+		public ChatPanel(String groupName , User u, int numOfUsers) {
 			this.groupName = groupName;
 
-			if(!canSubmit) {
+			if(u.getRole() == Role.READER) {
 				UserInput.setText("You are not allowed to send messages in this channel.");
 				UserInput.setEditable(false);
 				SubmitButton.setEnabled(false);
 			}
 
 			try{
-				chatMessenger = new Messenger(groupName, new MessengerListener() {//TODO: Test whether this listener works
+				chatMessenger = new Messenger(groupName, u, numOfUsers, new MessengerListener() {//TODO: Test whether this listener works
 					public void eventHappened(Object o) {
 						if(o instanceof User) {
 							UserList.add(new JLabel(((User)o).getUsername()));
@@ -122,6 +141,16 @@ public class MainWindow extends JFrame{
 							ChatMessage message = (ChatMessage) o;
 							message.setContent(Parser.parse(message.getContent()));
 							addMessage(message);
+						} else if(o instanceof Role) {
+							if((Role)o == Role.READER) {
+								UserInput.setText("You are not allowed to send messages in this channel.");
+								UserInput.setEditable(false);
+								SubmitButton.setEnabled(false);
+							} else {
+								UserInput.setText("");
+								UserInput.setEditable(true);
+								SubmitButton.setEnabled(true);
+							}
 						}
 					}
 				});

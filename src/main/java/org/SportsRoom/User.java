@@ -15,14 +15,11 @@ public class User implements Serializable {
 	private String address;
 	
 
-	public User(String username, String address, boolean canSubmit) {
+	public User(String username, String address, Role role) {
 
 		setUsername(username);
 		setAddress(address);
-		if(canSubmit)
-			role = Role.WRITER;
-		else
-			role = Role.READER;
+		this.role = role;
 	}
 	public User(){}
 	public String getUsername() {
@@ -79,5 +76,12 @@ public class User implements Serializable {
 	public String toString() {
 		return 	role +": " + username + ", '"
 				+ address + '\'';
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof User)
+			return ((User)obj).getAddress().equals(getAddress());
+		return false;
 	}
 }

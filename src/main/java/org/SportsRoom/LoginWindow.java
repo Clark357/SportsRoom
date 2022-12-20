@@ -15,7 +15,7 @@ public class LoginWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if(!panel.loginButton.isEnabled()) {
-                    MetaSuperGroup.initMetaSuperGroup(panel.getUsername(), w);
+                    MetaSuperGroup.initMetaSuperGroup(panel.getUsername(), panel.getPassword(), w);
 
                     w.setVisible(true);
                     w.getPanel().initNews();
