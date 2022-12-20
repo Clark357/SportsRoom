@@ -105,7 +105,7 @@ public class Storage {
 	 * @param sharedKey for encryption
 	 * @param users of the group chat
 	 */
-	public void initializeStorageFile(long sharedKey, long publicKey, long privateKey, User[] users) {
+	public void initializeStorageFile(long sharedKey, long publicKey, long privateKey, int amountOfUsers) {
 		if(isInitialized) return;
 
 		String hash;
@@ -113,12 +113,12 @@ public class Storage {
 		try {
 			raf.seek(0);
 			raf.writeBytes(Encryption.Encrypt( "" + sharedKey, hash.hashCode()));
-			for (User user : users) {
-				raf.writeBytes(mapper.writeValueAsString(user) + "\n");
+			for (int i = 0; i < amountOfUsers; i++) {
+				raf.writeBytes("\n");
 			}
 			raf.writeBytes("*****");
 			raf.writeBytes("\n" + mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"),
-					new User("SportsRoom", "0",true),
+					new User("SportsRoom", "0",Role.MODERATOR),
 					Encryption.Encrypt("This is the start of your conversation",sharedKey))));
 			isInitialized = true;
 		} catch (IOException e) {
@@ -203,7 +203,7 @@ public class Storage {
 				temp = raf.readLine();
 				if(temp.charAt(2) == '*') {
 					amount = i;
-					break; //TODO can we use break statements?
+					break;
 				}
 				raf.seek(raf.getFilePointer() - temp.length() - 1);
 			}
@@ -308,9 +308,31 @@ public class Storage {
 	 * Writes the given users into the storage file
 	 * @param users to be written, only the same amount of users as before
 	 */
-	public void updateUsers(User[] users, long publicKey, long privateKey) {
-		long key = getSharedKey(publicKey, privateKey);
-		isInitialized = false;
-		initializeStorageFile(key, publicKey, privateKey, users);
+	public void updateUsers(User[] users) {
+		if(!isInitialized) return;
+
+		try {
+			raf.seek(0);
+			raf.readLine();
+			for (User user : users) {
+				raf.writeBytes(mapper.writeValueAsString(user) + "\n");
+			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+			System.exit(-1);
+		}
+	}
+
+	public static void deleteStorage(String filename) {
+		File storage = new File(filename + ".json");
+		storage.delete();
+	}
+	public void closeStorage() {
+		try {
+			raf.close();
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+			System.exit(-1);
+		}
 	}
 }
