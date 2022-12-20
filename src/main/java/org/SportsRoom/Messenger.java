@@ -9,6 +9,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Messenger implements Receiver{
 
@@ -132,7 +133,7 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 		final long[] sharedKeyReceived = new long[1];
 
 		try {
-			new EncryptionInitiator(groupName, users.length, numOfActualUsers, new EncryptionInitiatorListener() {
+			new EncryptionInitiator(groupName, users.length, numOfActualUsers, EncryptionInitiator.getRandomPrimeNumberPair(), new EncryptionInitiatorListener() {
 				public void keyCreated(long sharedKey) {
 					sharedKeyReceived[0] = sharedKey;
 				}
@@ -146,10 +147,10 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 	}
 
 	public static void initPeerToPeer(String groupName, User[] chatters, User[] storages, MainWindow w) {
-		initSuperGroupKey(groupName, chatters, username, password, storages.length);
+//		initSuperGroupKey(groupName, chatters, username, password, storages.length);
 		for(User u : storages) {
 			try {
-				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), storages.length)));
+				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), chatters.length, storages.length, EncryptionInitiator.getRandomPrimeNumberPair())));
 			} catch (Exception e) {
 				System.err.println("Fatal error: Could not initialize a peer-to-peer group.");
 				System.exit(-1);
@@ -158,10 +159,10 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 	}
 
 	public static void initGroupChat(String groupName, User[] users, MainWindow w) {
-		initSuperGroupKey(groupName, users, username, password, users.length);
+//		initSuperGroupKey(groupName, users, username, password, users.length);
 		for(User u : users) {
 			try {
-				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length)));
+				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length, users.length, EncryptionInitiator.getRandomPrimeNumberPair())));
 			} catch (Exception e) {
 				System.err.println("Fatal error: Could not initialize a Group Chat group.");
 				System.exit(-1);
@@ -170,10 +171,10 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 	}
 
 	public static void initChannel(String groupName, User[] users, MainWindow w) {
-		initSuperGroupKey(groupName, users, username, password, users.length);
+//		initSuperGroupKey(groupName, users, username, password, users.length);
 		for(User u : users) {
 			try {
-				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length)));
+				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length, users.length, EncryptionInitiator.getRandomPrimeNumberPair())));
 			} catch (Exception e) {
 				System.err.println("Fatal error: Could not initialize a Group Chat group.");
 				System.exit(-1);
@@ -184,10 +185,26 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 	public void receive(Message msg) {
 		InitiationProtocolMessage m = (InitiationProtocolMessage) msg.getObject();
 
-		w.getPanel().addChatPanel(new MainWindow.ChatPanel(m.getGroupName(), new User(metaSuperGroup.getName(), metaSuperGroup.getAddressAsUUID(), m.getRole()), m.getNumOfUsers()));
+		try {
+			Storage chatStorage = new Storage(m.getGroupName());
+			chatStorage.initializeStorageFile(m.getPrimes()[0], username.hashCode(), password.hashCode(), m.getActualNumOfUsers());
+			chatStorage.closeStorage();
+			w.getPanel().addChatPanel(new MainWindow.ChatPanel(m.getGroupName(), new User(metaSuperGroup.getName(), metaSuperGroup.getAddressAsUUID(), m.getRole()), m.getNumOfUsers()));
+//			EncryptionInitiator e = new EncryptionInitiator(m.getGroupName(), m.getNumOfUsers(), m.getActualNumOfUsers(), m.getPrimes(), new EncryptionInitiatorListener() {
+//				public void keyCreated(long sharedKey) {
+//					w.getPanel().addChatPanel(new MainWindow.ChatPanel(m.getGroupName(), new User(metaSuperGroup.getName(), metaSuperGroup.getAddressAsUUID(), m.getRole()), m.getNumOfUsers()));
+//				}
+//			});
+
+//			while(e.getNumOfUsersCommunicating() != m.getNumOfUsers()) TimeUnit.MILLISECONDS.sleep(100);
+		} catch (Exception e) {
+			System.err.println("Fatal error: Could not connect to the Supergroup");
+			System.exit(-1);
+		}
 	}
 
 	public void viewAccepted(View v) {
 		//TODO: Decide whether a view update needs any action
+		System.out.println(v);
 	}
 }

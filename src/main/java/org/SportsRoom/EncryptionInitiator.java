@@ -10,41 +10,44 @@ public class EncryptionInitiator implements Receiver {
 	private static long publicKey;
 	private static long privateKey;
     private long sharedKey;
-    private long keysReceived;
+    private int keysReceived;
     private long[] primes;
     private JChannel channel;
     private int numOfUsersCommunicating;
     private int numOfActualUsers;
     private EncryptionInitiatorListener listener;
 
-    public EncryptionInitiator(String groupName, int numOfUsers, int numOfActualUsers, EncryptionInitiatorListener listener) throws Exception {
+    public EncryptionInitiator(String groupName, int numOfUsers, int numOfActualUsers, long[] primes, EncryptionInitiatorListener listener) throws Exception {
         channel = new JChannel("src/main/resources/tcp.xml").setName(MetaSuperGroup.username).connect(groupName).setDiscardOwnMessages(true);
         keysReceived = 0;
         this.listener = listener;
         this.channel = channel;
-        this.primes = getRandomPrimeNumberPair();
+        this.primes = primes;
         this.numOfUsersCommunicating = numOfUsers;
         this.numOfActualUsers = numOfActualUsers;
+
+        sharedKey = pow(primes[1],privateKey)%primes[0];
+        keysReceived = 1;
     }
 
     @Override
     public void viewAccepted(View v) {
-        if(v.size() == numOfUsersCommunicating) {
+        System.out.println(v);
+        if(v.size() == numOfUsersCommunicating)
             try {
-                sharedKey = pow(primes[1],privateKey)%primes[0];
-                keysReceived = 1;
-                channel.send(new ObjectMessage(null, Long.valueOf(sharedKey)));
+                channel.send(new ObjectMessage(null, new KeyExchangeProtocol(sharedKey, keysReceived)));
             } catch (Exception e) {
                 System.err.println("Fatal error: Could not send the initialization message.");
                 System.exit(-1);
             }
-        }
     }
 
     @Override
     public void receive(Message msg) {
-        if(msg.getObject() instanceof Long) {
-            sharedKey = ( sharedKey * (Long)msg.getObject() ) % primes[0];
+        System.out.println(msg);
+        if(msg.getObject() instanceof KeyExchangeProtocol) {
+            KeyExchangeProtocol k = (KeyExchangeProtocol) msg.getObject();
+            sharedKey = ( sharedKey * k.getSharedKey() ) % primes[0];
             keysReceived++;
             if(keysReceived == numOfUsersCommunicating) {
                 listener.keyCreated(sharedKey);
@@ -56,12 +59,16 @@ public class EncryptionInitiator implements Receiver {
         }
     }
 
+    public int getNumOfUsersCommunicating() {
+        return numOfUsersCommunicating;
+    }
+
     public void setPublicPrivateKey(long publicKeyGiven, long privateKeyGiven) {
         publicKey = publicKeyGiven;
         privateKey = privateKeyGiven;
     }
 
-	private long[] getRandomPrimeNumberPair() throws FileNotFoundException {
+	public static long[] getRandomPrimeNumberPair() throws FileNotFoundException {
 		File file = new File("src/main/resources/Output.txt");
         Scanner fileIn = new Scanner(file);
         ArrayList<Long> primes = new ArrayList<Long>();
