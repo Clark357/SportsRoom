@@ -84,6 +84,7 @@ public class MainWindow extends JFrame{
 			newsAggregator = new News();
 			newsAggregator.importNews();
 			NewsHTML.setText(newsAggregator.writeHtml());
+			NewsHTML.setCaretPosition(0);
 			NewsHTML.addHyperlinkListener(new HyperlinkListener() {
 				public void hyperlinkUpdate(HyperlinkEvent e) {
 					if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)

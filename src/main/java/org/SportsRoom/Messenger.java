@@ -62,7 +62,7 @@ public class Messenger implements Receiver{
 
 	// NOTE: It is assumed that whenever this constructor is called the supergroup is already initialized
 	public Messenger(String groupName, User client, int numOfUsers, MessengerListener listener) throws Exception { //TODO: Finish the group reconnection constructor by communicating with Storage
-		superGroup = new JChannel().setName(MetaSuperGroup.metaSuperGroup.getName()).connect(groupName).setReceiver(this);
+		superGroup = new JChannel("src/main/resources/tcp.xml").setName(MetaSuperGroup.metaSuperGroup.getName()).connect(groupName).setReceiver(this);
 		this.listener = listener;
 		this.currentClient = client;
 
@@ -106,7 +106,7 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 		password = passwordInput;
 		w = window;
 		try {
-			metaSuperGroup = new JChannel().setName(username).setReceiver(new MetaSuperGroup()).connect("MetaSuperGroup");
+			metaSuperGroup = new JChannel("src/main/resources/tcp.xml").setName(username).setReceiver(new MetaSuperGroup()).connect("MetaSuperGroup");
 
 			JMenu about = new JMenu("About");
 			about.add(new JMenuItem(new AbstractAction("Copy UUID") {

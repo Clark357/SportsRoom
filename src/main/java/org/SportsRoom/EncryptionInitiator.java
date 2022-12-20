@@ -18,7 +18,7 @@ public class EncryptionInitiator implements Receiver {
     private EncryptionInitiatorListener listener;
 
     public EncryptionInitiator(String groupName, int numOfUsers, int numOfActualUsers, EncryptionInitiatorListener listener) throws Exception {
-        channel = new JChannel().connect(groupName).setDiscardOwnMessages(true);
+        channel = new JChannel("src/main/resources/tcp.xml").setName(MetaSuperGroup.username).connect(groupName).setDiscardOwnMessages(true);
         keysReceived = 0;
         this.listener = listener;
         this.channel = channel;
@@ -62,7 +62,7 @@ public class EncryptionInitiator implements Receiver {
     }
 
 	private long[] getRandomPrimeNumberPair() throws FileNotFoundException {
-		File file = new File("../resources/Output.txt");
+		File file = new File("src/main/resources/Output.txt");
         Scanner fileIn = new Scanner(file);
         ArrayList<Long> primes = new ArrayList<Long>();
         ArrayList<Long> allPrimes = new ArrayList<Long>();
@@ -75,7 +75,7 @@ public class EncryptionInitiator implements Receiver {
                 roots.get(roots.size()-1).add(Long.parseLong(curr.split(" ")[i]));
             }
         }
-        Scanner fileIn2 = new Scanner(new File("../resources/More Primes.txt"));
+        Scanner fileIn2 = new Scanner(new File("src/main/resources/More Primes.txt"));
         while(fileIn2.hasNextLong()){
             allPrimes.add(fileIn2.nextLong());
         }
