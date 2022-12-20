@@ -13,19 +13,18 @@ public class Stats {
 	private static JSONObject getPlayerStats(int playerID) {
 		String urlString = "https://www.balldontlie.io/api/v1/season_averages?player_ids[]=" + playerID;
 		JSONObject jsonObj = new JSONObject();
-		try{
+		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.connect();
 			int responseCode = con.getResponseCode();
-			if(responseCode != 200){
+			if (responseCode != 200) {
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
-			}
-			else{
+			} else {
 				Scanner read = new Scanner(url.openStream());
 				StringBuilder jsonString = new StringBuilder();
-				while(read.hasNextLine()){
+				while (read.hasNextLine()) {
 					jsonString.append(read.nextLine());
 				}
 				JSONParser parser = new JSONParser();
@@ -33,18 +32,18 @@ public class Stats {
 				JSONArray jsonArray = (JSONArray) jsonObj.get("data");
 				jsonObj = (JSONObject) jsonArray.get(0);
 			}
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return jsonObj;
 	}
 
-	public static String getPts(int playerID){
+	public static String getPts(int playerID) {
 		JSONObject jsonObj = getPlayerStats(playerID);
 		String pts = jsonObj.get("pts").toString();
 		return pts;
 	}
+
 	public static String getAst(int playerID) {
 		JSONObject jsonObj = getPlayerStats(playerID);
 		String ast = jsonObj.get("ast").toString();
@@ -66,20 +65,19 @@ public class Stats {
 	public static String getTeam(int playerID) {
 
 		String urlString = "https://www.balldontlie.io/api/v1/players/" + playerID;
-		String teamName="";
-		try{
+		String teamName = "";
+		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.connect();
 			int responseCode = con.getResponseCode();
-			if(responseCode != 200){
+			if (responseCode != 200) {
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
-			}
-			else{
+			} else {
 				Scanner read = new Scanner(url.openStream());
 				StringBuilder JSONString = new StringBuilder();
-				while (read.hasNextLine()){
+				while (read.hasNextLine()) {
 					JSONString.append(read.nextLine());
 				}
 				JSONParser parser = new JSONParser();
@@ -88,65 +86,60 @@ public class Stats {
 				teamName = jsonObj.get("name").toString();
 
 			}
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return teamName;
 	}
 
-	public static String getPlayerName(int playerID){
+	public static String getPlayerName(int playerID) {
 		String urlString = "https://www.balldontlie.io/api/v1/players/" + playerID;
-		String playerName="";
-		try{
+		String playerName = "";
+		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.connect();
 			int responseCode = con.getResponseCode();
-			if(responseCode != 200){
+			if (responseCode != 200) {
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
-			}
-			else{
+			} else {
 				Scanner read = new Scanner(url.openStream());
 				StringBuilder JSONString = new StringBuilder();
-				while (read.hasNextLine()){
+				while (read.hasNextLine()) {
 					JSONString.append(read.nextLine());
 				}
 				JSONParser parser = new JSONParser();
 				JSONObject jsonObj = (JSONObject) parser.parse(JSONString.toString());
 				playerName = jsonObj.get("first_name").toString() + " " + jsonObj.get("last_name").toString();
 			}
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return playerName;
 	}
 
-	private static JSONObject gameConnection(int gameID){
+	private static JSONObject gameConnection(int gameID) {
 		String urlString = "https://www.balldontlie.io/api/v1/games/" + gameID;
 		JSONObject jsonObj = new JSONObject();
-		try{
+		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.connect();
 			int responseCode = con.getResponseCode();
-			if(responseCode != 200){
+			if (responseCode != 200) {
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
-			}
-			else{
+			} else {
 				Scanner read = new Scanner(url.openStream());
 				StringBuilder JSONString = new StringBuilder();
-				while (read.hasNextLine()){
+				while (read.hasNextLine()) {
 					JSONString.append(read.nextLine());
 				}
 				JSONParser parser = new JSONParser();
 				jsonObj = (JSONObject) parser.parse(JSONString.toString());
 			}
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return jsonObj;
@@ -169,18 +162,42 @@ public class Stats {
 		String winner;
 		Long homeTeamScore = (Long) jsonObj.get("home_team_score");
 		Long visitorTeamScore = (Long) jsonObj.get("visitor_team_score");
-		if(homeTeamScore > visitorTeamScore){
+		if (homeTeamScore > visitorTeamScore) {
 			jsonObj = (JSONObject) jsonObj.get("home_team");
 			winner = jsonObj.get("name").toString();
-		}
-		else if(visitorTeamScore > homeTeamScore){
+		} else if (visitorTeamScore > homeTeamScore) {
 			jsonObj = (JSONObject) jsonObj.get("visitor_team");
 			winner = jsonObj.get("name").toString();
-		}
-		else{
+		} else {
 			winner = "No winner";
 		}
 		return winner;
 	}
 
+	public static int returnPlayerID(String playerName) {
+		String urlString = "https://www.balldontlie.io/api/v1/players?search=" + playerName;
+		int playerID = -1;
+		try {
+			URL url = new URL(urlString);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.connect();
+			int responseCode = con.getResponseCode();
+			if (responseCode != 200) {
+				throw new RuntimeException("HttpResponseCode: " + responseCode);
+			} else {
+				Scanner read = new Scanner(url.openStream());
+				StringBuilder JSONString = new StringBuilder();
+				while (read.hasNextLine()) {
+					JSONString.append(read.nextLine());
+				}
+				JSONParser parser = new JSONParser();
+				JSONObject jsonObj = (JSONObject) parser.parse(JSONString.toString());
+				playerID = (int) jsonObj.get("id");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return playerID;
+	}
 }
