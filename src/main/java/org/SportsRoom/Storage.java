@@ -114,11 +114,14 @@ public class Storage {
 		}
 		String hash;
 		hash = "" + publicKey + privateKey;
+		int hashKey = hash.hashCode();
+		if(hashKey < 0) hashKey *= -1;
+		hashKey %= 101;
 		try {
 			infoRaf.seek(0);
-			infoRaf.writeBytes(Encryption.Encrypt( "" + sharedKey, hash.hashCode()) + "\n");
+			infoRaf.writeBytes(mapper.writeValueAsString(Encryption.Encrypt("" + sharedKey, hashKey))+ "\n");
 			infoRaf.close();
-			raf.writeBytes(mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), Encryption.Encrypt("This is the start of your conversation",sharedKey))) + "\n*****");
+			raf.writeBytes(mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), Encryption.Encrypt("This is the start of your conversation",sharedKey))) + "\n*****\n");
 			isInitialized = true;
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -292,7 +295,12 @@ public class Storage {
 
 		RandomAccessFile infoRaf;
 		long key;
+		String hash;
 
+		hash = "" + publicKey + privateKey;
+		int hashKey = hash.hashCode();
+		if(hashKey < 0) hashKey *= -1;
+		hashKey %= 101;
 		try {
 			infoRaf = new RandomAccessFile("src/info/" + fileName + "info.json", "rw");
 		} catch (FileNotFoundException e) {
@@ -302,7 +310,18 @@ public class Storage {
 		}
 		try {
 			infoRaf.seek(0);
-			key = Long.parseLong(infoRaf.readLine());
+			String temp = infoRaf.readLine();
+			String tempFixed = "";
+			for (int i = 1; i < temp.length() - 3; i++) {
+				if(temp.substring(i, i+2).equals('\\' + "n")){
+					tempFixed += "\n";
+					i++;
+				}
+				else {
+					tempFixed += temp.charAt(i) ;
+				}
+			}
+			key = Long.parseLong(Encryption.Decrypt(tempFixed +"\n", hashKey));
 			infoRaf.close();
 		} catch (IOException e) {
 			key = 0;
@@ -311,7 +330,7 @@ public class Storage {
 		}
 
 
-		return Long.parseLong(Encryption.Decrypt("" + key, ("" + publicKey + privateKey).hashCode()));
+		return key;
 	}
 
 	/**
@@ -362,5 +381,29 @@ public class Storage {
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
+	}
+	public static void main(String[] args) throws IOException {
+		Storage s1 = new Storage("s1");
+		long x = 123L;
+		long y = 789L;
+		User u1 = new User("a", "12",Role.MODERATOR);
+		User u2 = new User("b", "13",Role.MODERATOR);
+		User u3 = new User("c", "14",Role.MODERATOR);
+		s1.initializeStorageFile(234L,x,y);
+		s1.updateUsers(new User[]{u1,u2,u3});
+		LocalDateTime l = LocalDateTime.of(2022,10,20,20,12,23);
+
+		s1.addMessages(new ChatMessage[]{new ChatMessage(l.minusDays(1),u1,"ilk"),new ChatMessage(l.plusHours(10),u2,"iki"),new ChatMessage(l.plusDays(3),u3,"üç")});
+
+		System.out.println(s1.getSharedKey(x,y));
+		System.out.println(Arrays.toString(s1.getMessages(5)));
+		System.out.println(Arrays.toString(s1.getMessages(l)));
+		System.out.println(s1.getUsers());
+		System.out.println(s1.getChatNames(x,y));
+		//mapper = new ObjectMapper();
+		//mapper.registerModule(new JavaTimeModule());
+		//System.out.println(mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), Encryption.Encrypt("This is the start of your conversation",5L))));
+
+		//System.out.println(Encryption.Encrypt("This is the start of your conversation", 5));
 	}
 }
