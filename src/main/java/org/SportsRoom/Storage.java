@@ -44,7 +44,7 @@ public class Storage {
 		output = new ArrayList<>();
 
 		for (int i = 0; i < Objects.requireNonNull(allChats).length; i++) {
-			try {
+			/*try {
 				RandomAccessFile r = new RandomAccessFile("src\\data\\" + allChats[i], "r");
 				String temp = r.readLine();
 				long key = Long.parseLong(Encryption.Decrypt(temp, ("" + publicKey + privateKey).hashCode()));
@@ -63,10 +63,11 @@ public class Storage {
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 				System.exit(-1);
-			}
-
+			}*/
+			//Temporary replacement
+			output.add(allChats[i]);
 		}
-		return  output;
+		return output;
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class Storage {
 	/**
 	 * Creates a new storage file with given users and shared key
 	 * @param sharedKey for encryption
-	 * @param users of the group chat
+	 * @param amountOfUsers of the group chat
 	 */
 	public void initializeStorageFile(long sharedKey, long publicKey, long privateKey, int amountOfUsers) {
 		if(isInitialized) return;
@@ -112,14 +113,15 @@ public class Storage {
 		hash = "" + publicKey + privateKey;
 		try {
 			raf.seek(0);
-			raf.writeBytes(Encryption.Encrypt( "" + sharedKey, hash.hashCode()));
+			raf.writeBytes(Encryption.Encrypt( "" + sharedKey, hash.hashCode()) + "\n");
 			for (int i = 0; i < amountOfUsers; i++) {
 				raf.writeBytes("\n");
 			}
-			raf.writeBytes("*****");
-			raf.writeBytes("\n" + mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"),
-					new User("SportsRoom", "0",Role.MODERATOR),
-					Encryption.Encrypt("This is the start of your conversation",sharedKey))));
+
+			raf.writeBytes("*****\n");
+			String temp = mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), "This is the start of your conversation"));
+			raf.writeBytes(temp);
+			raf.close();
 			isInitialized = true;
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -317,6 +319,7 @@ public class Storage {
 			for (User user : users) {
 				raf.writeBytes(mapper.writeValueAsString(user) + "\n");
 			}
+			raf.writeBytes("*****\n");
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
