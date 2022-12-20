@@ -359,7 +359,11 @@ public class Storage {
 		}
 		try {
 			infoRaf.seek(0);
-			infoRaf.readLine();
+			String temp = infoRaf.readLine();
+			infoRaf.close();
+			new File("src/info/" + fileName + "info.json").delete();
+			infoRaf = new RandomAccessFile("src/info/" + fileName + "info.json", "rw");
+			infoRaf.writeBytes(temp + "\n");
 			for (User user : users) {
 				infoRaf.writeBytes(mapper.writeValueAsString(user) + "\n");
 			}
