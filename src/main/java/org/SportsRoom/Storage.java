@@ -82,7 +82,6 @@ public class Storage {
 		try{
 			if(Objects.requireNonNull(output).length != 0){
 				raf.seek(raf.length());
-				raf.writeBytes("\n");
 				for(int i = 0; i < localMessages.length; i++){
 					getToLineStart();
 				}
@@ -178,7 +177,7 @@ public class Storage {
 
 		index1 = 0;
 		index2 = 0;
-		output = new ChatMessage[arr1.length + arr2.length - 1];
+		output = new ChatMessage[arr1.length + arr2.length];
 		if(output.length == 0) return output;
 		if (arr2.length == 0) return arr1;
 		if(arr1.length == 0) return arr2;
