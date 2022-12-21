@@ -123,7 +123,7 @@ public class Storage {
 		hashKey %= 101;
 		try {
 			infoRaf.seek(0);
-			infoRaf.writeBytes(mapper.writeValueAsString(sharedKey));//Encryption.Encrypt("" + sharedKey, hashKey))+ "\n");
+			infoRaf.writeBytes(Long.toString(sharedKey));//Encryption.Encrypt("" + sharedKey, hashKey))+ "\n");
 			infoRaf.close();
 			raf.writeBytes(mapper.writeValueAsString(new ChatMessage(LocalDateTime.parse("2000-01-01T01:01:01"), new User("SportsRoom", "0",Role.MODERATOR), Encryption.Encrypt("This is the start of your conversation",sharedKey))) + "\n*****\n");
 			isInitialized = true;

@@ -84,11 +84,12 @@ public class MainWindow extends JFrame{
 
 	public void initChatPanels() {
 		for(Storage s : Storage.getChatNames(MetaSuperGroup.username.hashCode(), MetaSuperGroup.password.hashCode())) {
-			Role role = Role.READER;
+			Role role = null;
 			for(User u : s.getUsers())
 				if(u.getUsername().equals(MetaSuperGroup.username))
 					role = u.getRole();
-			getPanel().addChatPanel(new ChatPanel(s.getFileName(), new User(MetaSuperGroup.username, MetaSuperGroup.metaSuperGroup.getAddressAsUUID(), role), s.getUsers().size(), this));
+			if(role != null)
+				getPanel().addChatPanel(new ChatPanel(s.getFileName(), new User(MetaSuperGroup.username, MetaSuperGroup.metaSuperGroup.getAddressAsUUID(), role), s.getUsers().size(), this));
 		}
 	}
 
