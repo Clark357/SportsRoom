@@ -181,20 +181,26 @@ public class Stats {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
-			con.connect();
-			int responseCode = con.getResponseCode();
-			if (responseCode != 200) {
-				throw new RuntimeException("HttpResponseCode: " + responseCode);
-			} else {
-				Scanner read = new Scanner(url.openStream());
-				StringBuilder JSONString = new StringBuilder();
-				while (read.hasNextLine()) {
-					JSONString.append(read.nextLine());
-				}
-				JSONParser parser = new JSONParser();
-				JSONObject jsonObj = (JSONObject) parser.parse(JSONString.toString());
-				playerID = (int) jsonObj.get("id");
-			}
+
+			playerID = 237;
+
+			//Warning: Does not work
+//			con.connect();
+//			int responseCode = con.getResponseCode();
+//			if (responseCode != 200) {
+//				throw new RuntimeException("HttpResponseCode: " + responseCode);
+//			} else {
+//				Scanner read = new Scanner(url.openStream());
+//				StringBuilder JSONString = new StringBuilder();
+//				while (read.hasNextLine()) {
+//					JSONString.append(read.nextLine());
+//				}
+//				JSONParser parser = new JSONParser();
+//				JSONObject jsonObj = (JSONObject) parser.parse(JSONString.toString());
+//				JSONArray data = (JSONArray) jsonObj.get("data");
+//				jsonObj = (JSONObject) data.get(0);
+//				playerID = (int) jsonObj.get("id");
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

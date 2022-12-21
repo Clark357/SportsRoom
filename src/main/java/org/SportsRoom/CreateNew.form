@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.CreateNew">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.SportsRoom.MainWindow.CreateNew">
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
@@ -49,7 +49,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="My Chat"/>
+              <text value=""/>
             </properties>
           </component>
         </children>
@@ -84,7 +84,7 @@
               <component id="d00" class="javax.swing.JTextArea" binding="Superset">
                 <constraints border-constraint="Center"/>
                 <properties>
-                  <text value="192.168.1.2&#10;192.168.1.67&#10;192.168.1.3&#10;192.168.1.62&#10;192.168.1.6&#10;192.168.1.6&#10;192.168.1.9&#10;192.168.1.68&#10;192.168.1.2&#10;192.168.1.63&#10;"/>
+                  <text value=""/>
                 </properties>
               </component>
             </children>

@@ -1,11 +1,16 @@
 package org.SportsRoom;
 
+import com.sun.tools.javac.Main;
+import org.jgroups.demos.Chat;
+import org.jgroups.util.UUID;
+
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.Timer;
@@ -34,16 +39,18 @@ public class MainWindow extends JFrame{
 		bar = new JMenuBar();
 		JMenu edit = new JMenu("Edit");
 		leave = new JMenu("Leave Chats");
+
+		MainWindow w = this;
 		edit.add(new AbstractAction("Create New...") {
 			public void actionPerformed(ActionEvent e) {
-				//TODO: Pop up the CreateNew Dialog
+				new CreateNew(panel.getGroups(), w);
 			}
 		});
 
 		//TODO:These are for demonstration purposes. This should be automated to search for all the groups
-		leave.add("LeBron Channel");
-		leave.add("Isaac");
-		leave.add("Group Chat");
+//		leave.add("LeBron Channel");
+//		leave.add("Isaac");
+//		leave.add("Group Chat");
 
 		edit.add(new AbstractAction("Manage Groups") {
 			public void actionPerformed(ActionEvent e) {
@@ -71,6 +78,28 @@ public class MainWindow extends JFrame{
 		return bar;
 	}
 
+	public JMenu getLeave() {
+		return leave;
+	}
+
+	public void initChatPanels() {
+		for(Storage s : Storage.getChatNames(MetaSuperGroup.username.hashCode(), MetaSuperGroup.password.hashCode())) {
+			Role role = Role.READER;
+			for(User u : s.getUsers())
+				if(u.getUsername().equals(MetaSuperGroup.username))
+					role = u.getRole();
+			getPanel().addChatPanel(new ChatPanel(s.getFileName(), new User(MetaSuperGroup.username, MetaSuperGroup.metaSuperGroup.getAddressAsUUID(), role), s.getUsers().size(), this));
+		}
+	}
+
+	public void removeLeave(String groupName) {
+		int indexOfTab = -1;
+		for(int i = 0; i < getPanel().groups.size(); i++)
+			if(getPanel().groups.get(i).groupName.equals(groupName))
+				indexOfTab = i;
+		leave.remove(indexOfTab);
+	}
+
 	public static class MainMenu {
 
 		private JPanel panel1;
@@ -79,6 +108,10 @@ public class MainWindow extends JFrame{
 		private JTextPane NewsHTML;
 		private News newsAggregator;
 		private ArrayList<ChatPanel> groups;
+
+		public MainMenu() {
+			groups = new ArrayList<>();
+		}
 
 		public void initNews() {
 			newsAggregator = new News();
@@ -102,6 +135,18 @@ public class MainWindow extends JFrame{
 			groups.add(panel);
 		}
 
+		public void removeChatPanel(String panelName) {
+			int indexOfTab = -1;
+			for(int i = 0; i < groups.size(); i++)
+				if(groups.get(i).groupName.equals(panelName))
+					indexOfTab = i;
+			if(indexOfTab != -1) {
+				groups.get(indexOfTab).close();
+				Tabs.remove(indexOfTab + 1); // Since we have News as the first tab.
+				groups.remove(indexOfTab);
+			}
+		}
+
 		public JPanel getPanel() {
 			return panel1;
 		}
@@ -118,12 +163,15 @@ public class MainWindow extends JFrame{
 		private JButton SubmitButton;
 		private JTextPane ChatConversation;
 		private JList UserList;
+		private DefaultListModel UserListModel;
 
 		private Timer updateTimer;
 		private Messenger chatMessenger;
 
-		public ChatPanel(String groupName , User u, int numOfUsers) {
+		public ChatPanel(String groupName , User u, int numOfUsers, MainWindow w) {
 			this.groupName = groupName;
+			UserListModel = new DefaultListModel();
+			UserList.setModel(UserListModel);
 
 			if(u.getRole() == Role.READER) {
 				UserInput.setText("You are not allowed to send messages in this channel.");
@@ -131,13 +179,20 @@ public class MainWindow extends JFrame{
 				SubmitButton.setEnabled(false);
 			}
 
+			w.getLeave().add(new AbstractAction(groupName) {
+				public void actionPerformed(ActionEvent e) {
+					w.removeLeave(groupName);
+					w.getPanel().removeChatPanel(groupName);
+				}
+			});
+
 			try{
 				chatMessenger = new Messenger(groupName, u, numOfUsers, new MessengerListener() {//TODO: Test whether this listener works
 					public void eventHappened(Object o) {
 						if(o instanceof User) {
-							UserList.add(new JLabel(((User)o).getUsername()));
+							UserListModel.add(UserListModel.size() == 0? 0 : UserListModel.size()-1, ((User)o).getUsername());
 						} else if(o instanceof Integer) {
-							UserList.remove(((Integer)o));
+							UserListModel.remove(((Integer)o));
 						} else if(o instanceof ChatMessage) {
 							ChatMessage message = (ChatMessage) o;
 							message.setContent(Parser.parse(message.getContent()));
@@ -173,6 +228,10 @@ public class MainWindow extends JFrame{
 					}
 				}
 			});
+		}
+
+		public void close() {
+			chatMessenger.close();
 		}
 
 		private void addMessage(ChatMessage message) {
@@ -226,10 +285,19 @@ public class MainWindow extends JFrame{
 			setModal(true);
 			getRootPane().setDefaultButton(buttonOK);
 
+			groupSelectionList = new HashMap<String, ChatPanel>();
+			userList = new HashMap<String, User>();
+
 			if(groups != null)
 				for(ChatPanel p : groups) { //TODO:Implement a way to prevent non-moderators from moderating random groups
-					GroupSelection.add(new JLabel(p.groupName));
-					groupSelectionList.put(p.groupName, p);
+					boolean isMod = false;
+					for(User u : p.getChatMessenger().getUsers())
+						if(u.getUsername().equals(MetaSuperGroup.username) && u.getRole() == Role.MODERATOR)
+							isMod = true;
+					if(isMod) {
+						GroupSelection.add(new JLabel(p.groupName));
+						groupSelectionList.put(p.groupName, p);
+					}
 				}
 			GroupSelection.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -326,6 +394,92 @@ public class MainWindow extends JFrame{
 				}
 			}
 
+		}
+	}
+
+	public class CreateNew extends JDialog{
+		private JPanel contentPane;
+		private JTextField myChatTextField;
+		private JComboBox comboBox1;
+		private JTextArea Superset;
+		private JButton buttonOK;
+		private JButton buttonCancel;
+		private String[] addresses;
+		private String[] usernames;
+		private final int GROUP_CHAT = 0;
+		private final int CHANNEL = 1;
+		private final int PEER_TO_PEER = 2;
+
+		public CreateNew(ArrayList<ChatPanel> groups, MainWindow w) {
+			setContentPane(contentPane);
+			setModal(true);
+			getRootPane().setDefaultButton(buttonOK);
+
+			Superset.append(MetaSuperGroup.username + ":" + MetaSuperGroup.metaSuperGroup.getAddressAsUUID() + "\n");
+
+			buttonOK.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(isValid(Superset) && isValid(myChatTextField, groups)) {
+						User[] users = new User[addresses.length];
+
+						for(int i = 0; i < addresses.length; i++)
+							users[i] = new User(usernames[i], addresses[i], i == 0 ? Role.MODERATOR: Role.WRITER);
+
+						if(comboBox1.getSelectedIndex() == GROUP_CHAT)
+							MetaSuperGroup.initGroupChat(myChatTextField.getText(), users, w);
+						else if(comboBox1.getSelectedIndex() == CHANNEL) {
+							for(int i = 1; i < users.length; i++)
+								users[i].downgradeRole();
+							MetaSuperGroup.initChannel(myChatTextField.getText(), users, w);
+						} else if(comboBox1.getSelectedIndex() == PEER_TO_PEER) {
+							for(int i = 2; i < users.length; i++)
+								users[i].downgradeRole();
+							MetaSuperGroup.initPeerToPeer(myChatTextField.getText(), Arrays.copyOf(users, 2), users, w);
+						}
+
+						dispose();
+					}
+				}
+			});
+
+			buttonCancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
+
+			setPreferredSize(new Dimension(436,297));
+			setTitle("Create New...");
+			SwingUtilities.updateComponentTreeUI(this);
+			pack();
+			setVisible(true);
+		}
+
+		private boolean isValid(JTextArea area) {
+			addresses = area.getText().split("\n");
+			usernames = new String[addresses.length];
+			for(int i = 0; i < addresses.length; i++)
+				try {
+					String[] split = addresses[i].split(":");
+					usernames[i] = split[0];
+					addresses[i] = split[1];
+					UUID.fromString(addresses[i]);
+				} catch(Exception e) {
+					return false;
+				}
+
+			return true;
+		}
+
+		private boolean isValid(JTextField chatName, ArrayList<ChatPanel> groups) {
+			for(ChatPanel p : groups)
+				if(p.groupName.equals(chatName.getText()))
+					return false;
+			return true;
+		}
+
+		public JPanel getPanel() {
+			return contentPane;
 		}
 	}
 }

@@ -63,12 +63,12 @@ public class News {
 					NewsArticle article = new NewsArticle(name, content, imgLink, permaLink, publishDate);
 					addArticle(article);
 				}
-
+				scan.close();
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public String writeHtml(){

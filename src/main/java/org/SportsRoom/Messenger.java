@@ -9,7 +9,6 @@ import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Messenger implements Receiver{
 
@@ -29,14 +28,14 @@ public class Messenger implements Receiver{
 		} else if(msg.getObject() instanceof RoleUpdateProtocolMessage) {
 			users = new ArrayList<>(Arrays.asList(((RoleUpdateProtocolMessage)msg.getObject()).getUsers()));
 			listener.eventHappened(users.get(users.indexOf(currentClient)).getRole());
-			chatStorage.updateUsers((User[])users.toArray());
+			chatStorage.updateUsers(users.toArray(new User[0]));
 		} else if(msg.getObject() instanceof SynchronizationProtocolMessage) {
 			if(((SynchronizationProtocolMessage)msg.getObject()).isRequest())
 				try {
 					superGroup.send(new ObjectMessage(msg.getSrc(), new SynchronizationProtocolMessage(LocalDateTime.now(),
 																								false,
 																										chatStorage.getMessages(((SynchronizationProtocolMessage)msg.getObject()).getDate()),
-																										(User[])chatStorage.getUsers().toArray(),
+																										chatStorage.getUsers().toArray(new User[0]),
 																										superGroup.getClusterName())));
 				} catch(Exception e) {
 					System.err.println("Error: Could not send the requested synchronization history.");
@@ -44,7 +43,8 @@ public class Messenger implements Receiver{
 			else {
 				SynchronizationProtocolMessage history = (SynchronizationProtocolMessage) msg.getObject();
 
-				chatStorage.addMessages(history.getMessages());
+				if(history.getMessages().length > 0)
+					chatStorage.addMessages(history.getMessages());
 				for(ChatMessage c : history.getMessages()) {
 					c.setContent(Encryption.Decrypt(c.getContent(), chatStorage.getSharedKey(MetaSuperGroup.username.hashCode(), MetaSuperGroup.password.hashCode())));
 					listener.eventHappened(c);
@@ -52,7 +52,7 @@ public class Messenger implements Receiver{
 
 				users = new ArrayList<>(Arrays.asList(((SynchronizationProtocolMessage)msg.getObject()).getUsers()));
 				listener.eventHappened(users.get(users.indexOf(currentClient)).getRole());
-				chatStorage.updateUsers((User[])users.toArray());
+				chatStorage.updateUsers(users.toArray(new User[0]));
 			}
 		}
 	}
@@ -69,7 +69,7 @@ public class Messenger implements Receiver{
 
 		chatStorage = new Storage(groupName);
 		if(!chatStorage.isInitialized()) {
-			chatStorage.initializeStorageFile(-1, (long)MetaSuperGroup.username.hashCode(), (long)MetaSuperGroup.password.hashCode(), numOfUsers);
+			chatStorage.initializeStorageFile(-1, (long)MetaSuperGroup.username.hashCode(), (long)MetaSuperGroup.password.hashCode());
 		}
 
 		synchronizeHistory();
@@ -78,8 +78,15 @@ public class Messenger implements Receiver{
 			listener.eventHappened(u);
 	}
 
+	public void close() {
+		superGroup.close();
+		chatStorage.closeStorage();
+		Storage.deleteStorage(superGroup.getClusterName());
+	}
+
 	public void synchronizeHistory() throws Exception{
-		superGroup.send(new ObjectMessage(superGroup.getView().getMembers().get(0), new SynchronizationProtocolMessage(chatStorage.getMessages(1)[0].getDate(), true, null, null, superGroup.getClusterName())));
+		ChatMessage[] msgs = chatStorage.getMessages(1);
+		superGroup.send(new ObjectMessage(superGroup.getView().getMembers().get(0), new SynchronizationProtocolMessage(msgs.length == 0? LocalDateTime.MIN : msgs[0].getDate(), true, null, null, superGroup.getClusterName())));
 	}
 
 	public void sendMessage(ChatMessage msg) throws Exception {
@@ -88,7 +95,7 @@ public class Messenger implements Receiver{
 	}
 
 	public void updateRoles() throws Exception {
-		superGroup.send(new ObjectMessage(null, new RoleUpdateProtocolMessage((User[])users.toArray())));
+		superGroup.send(new ObjectMessage(null, new RoleUpdateProtocolMessage(users.toArray(new User[0]))));
 	}
 
 	public ArrayList<User> getUsers() {
@@ -150,7 +157,7 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 //		initSuperGroupKey(groupName, chatters, username, password, storages.length);
 		for(User u : storages) {
 			try {
-				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), chatters.length, storages.length, EncryptionInitiator.getRandomPrimeNumberPair())));
+				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), chatters.length, storages, EncryptionInitiator.getRandomPrimeNumberPair())));
 			} catch (Exception e) {
 				System.err.println("Fatal error: Could not initialize a peer-to-peer group.");
 				System.exit(-1);
@@ -162,7 +169,7 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 //		initSuperGroupKey(groupName, users, username, password, users.length);
 		for(User u : users) {
 			try {
-				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length, users.length, EncryptionInitiator.getRandomPrimeNumberPair())));
+				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length, users, EncryptionInitiator.getRandomPrimeNumberPair())));
 			} catch (Exception e) {
 				System.err.println("Fatal error: Could not initialize a Group Chat group.");
 				System.exit(-1);
@@ -174,7 +181,7 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 //		initSuperGroupKey(groupName, users, username, password, users.length);
 		for(User u : users) {
 			try {
-				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length, users.length, EncryptionInitiator.getRandomPrimeNumberPair())));
+				metaSuperGroup.send(new ObjectMessage(UUID.fromString(u.getAddress()), new InitiationProtocolMessage(groupName, u.getRole(), users.length, users, EncryptionInitiator.getRandomPrimeNumberPair())));
 			} catch (Exception e) {
 				System.err.println("Fatal error: Could not initialize a Group Chat group.");
 				System.exit(-1);
@@ -187,9 +194,10 @@ class MetaSuperGroup implements Receiver { //TODO: Group creation function that 
 
 		try {
 			Storage chatStorage = new Storage(m.getGroupName());
-			chatStorage.initializeStorageFile(m.getPrimes()[0], username.hashCode(), password.hashCode(), m.getActualNumOfUsers());
+			chatStorage.initializeStorageFile(m.getPrimes()[0], username.hashCode(), password.hashCode());
+			chatStorage.updateUsers(m.getUsers());
 			chatStorage.closeStorage();
-			w.getPanel().addChatPanel(new MainWindow.ChatPanel(m.getGroupName(), new User(metaSuperGroup.getName(), metaSuperGroup.getAddressAsUUID(), m.getRole()), m.getNumOfUsers()));
+			w.getPanel().addChatPanel(new MainWindow.ChatPanel(m.getGroupName(), new User(metaSuperGroup.getName(), metaSuperGroup.getAddressAsUUID(), m.getRole()), m.getNumOfUsers(), w));
 //			EncryptionInitiator e = new EncryptionInitiator(m.getGroupName(), m.getNumOfUsers(), m.getActualNumOfUsers(), m.getPrimes(), new EncryptionInitiatorListener() {
 //				public void keyCreated(long sharedKey) {
 //					w.getPanel().addChatPanel(new MainWindow.ChatPanel(m.getGroupName(), new User(metaSuperGroup.getName(), metaSuperGroup.getAddressAsUUID(), m.getRole()), m.getNumOfUsers()));
