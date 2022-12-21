@@ -129,6 +129,9 @@ public class Storage {
 		}
 
 	}
+	public String getFileName() {
+		return fileName;
+	}
 
 	/**
 	 * Reads and returns users in the file
