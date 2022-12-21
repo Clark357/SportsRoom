@@ -38,10 +38,10 @@ public class Storage {
 	 *
 	 * @return A string array with the names of existing files in the data directory that the user can decryption
 	 */
-	public static ArrayList<String> getChatNames(long publicKey, long privateKey){
+	public static ArrayList<Storage> getChatNames(long publicKey, long privateKey){
 		File parent = new File("src\\data");
 		String[] allChats = parent.list();
-		ArrayList<String> output;
+		ArrayList<Storage> output;
 
 		output = new ArrayList<>();
 
@@ -53,8 +53,7 @@ public class Storage {
 				ChatMessage auth = mapper.readValue(r.readLine(),ChatMessage.class); // Get sample message
 
 				if(Encryption.Decrypt(auth.getContent(), key).equals("This is the start of your conversation"))
-					output.add(allChats[i].substring(0, allChats[i].length() - 9));
-				current.closeStorage();
+					output.add(current);
 			} catch (FileNotFoundException e) {
 				System.err.println(e.getMessage());
 				System.exit(-1);
