@@ -72,6 +72,12 @@ public class Messenger implements Receiver{
 			chatStorage.initializeStorageFile(-1, (long)MetaSuperGroup.username.hashCode(), (long)MetaSuperGroup.password.hashCode());
 		}
 
+		message = new ArrayList<>(Arrays.stream(chatStorage.getMessages(LocalDateTime.MIN)).toList());
+		for(ChatMessage m : message) {
+			m.setContent(Encryption.Decrypt(m.getContent(), chatStorage.getSharedKey(MetaSuperGroup.username.hashCode(), MetaSuperGroup.password.hashCode())));
+			listener.eventHappened(m);
+		}
+
 		synchronizeHistory();
 
 		for(User u: chatStorage.getUsers())

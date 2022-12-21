@@ -2,6 +2,7 @@ package org.SportsRoom;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class LoginWindow extends JFrame {
@@ -19,8 +20,8 @@ public class LoginWindow extends JFrame {
 
                     w.initChatPanels();
                     w.setVisible(true);
-                    w.getPanel().initNews();
                     dispose();
+                    w.getPanel().initNews();
                 }else
                     w.dispose();
             }
