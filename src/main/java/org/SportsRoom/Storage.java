@@ -180,27 +180,33 @@ public class Storage {
 		if(!isInitialized) return null;
 		int index1;
 		int index2;
-		ChatMessage[] output;
+		ArrayList<ChatMessage> output;
 
+		if(arr1.length == 0 && arr2.length != 0) return arr2;
+		if (arr2.length == 0 && arr1.length != 0) return arr1;
+		if (arr1.length + arr2.length == 0) return arr1;
 		index1 = 0;
 		index2 = 0;
-		output = new ChatMessage[arr1.length + arr2.length];
-		if(output.length == 0) return output;
-		if (arr2.length == 0) return arr1;
-		if(arr1.length == 0) return arr2;
+		output = new ArrayList<>(arr1.length + arr2.length);
 
-		for(int i = 0; i < output.length; i++){
-			if(index2 == -1 || (index1 != -1 && arr1[index1].getDate().isBefore(arr2[index2].getDate()))){
-				output[i] = arr1[index1];
+		for(int i = 0; i < arr1.length + arr2.length; i++){
+			if(index1 != -1 && arr1[index1].getDate().isBefore(arr2[index2].getDate())){
+				output.add(arr1[index1]);
 				index1++;
 				if(index1 >= arr1.length) index1 = -1;
-			}else {
-				output[i] = arr2[index2];
+			}else if(index2 != -1 && arr2[index2].getDate().isBefore(arr1[index1].getDate())){
+				output.add(arr2[index2]);
 				index2++;
 				if(index2 >= arr2.length) index2 = -1;
+			}else if(index1 != -1 && index2 != -1){
+				output.add(arr1[index1]);
+				index1++;
+				if (index1 >= arr1.length) index1 = -1;
+				index2++;
+				if (index2 >= arr2.length) index2 = -1;
 			}
 		}
-		return output;
+		return output.toArray(new ChatMessage[output.size()]);
 	}
 
 	/**
@@ -259,9 +265,9 @@ public class Storage {
 				if(tempString.charAt(2) == '*') break;
 				tempMessage = mapper.readValue(tempString, ChatMessage.class);
 				raf.seek(raf.getFilePointer() - tempString.length() - 1);
-				if(tempMessage.getDate().isAfter(startingTime))
+				if(tempMessage.getDate().isAfter(startingTime) || tempMessage.getDate().isEqual(startingTime))
 					amount++;
-			}while (tempMessage.getDate().isAfter(startingTime));
+			}while (tempMessage.getDate().isAfter(startingTime) || tempMessage.getDate().isEqual(startingTime));
 
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
