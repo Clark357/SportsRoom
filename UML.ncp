@@ -8,39 +8,54 @@
         <Name>Messenger</Name>
         <Access>Public</Access>
         <Location left="622" top="485" />
-        <Size width="219" height="200" />
+        <Size width="219" height="298" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private JChannel superGroup</Member>
         <Member type="Field">private Storage chatStorage</Member>
         <Member type="Field">private ArrayList&lt;User&gt; users</Member>
         <Member type="Field">private ArrayList&lt;ChatMessage&gt; message</Member>
-        <Member type="Method">public unclear synchronizeHistory()</Member>
-        <Member type="Method">public unclear sendMessage()</Member>
+        <Member type="Field">private MessengerListener listener</Member>
+        <Member type="Field">private User currentClient</Member>
+        <Member type="Method">public void synchronizeHistory()</Member>
+        <Member type="Method">public void sendMessage(ChatMessage msg)</Member>
+        <Member type="Method">public void receive(Message msg)</Member>
+        <Member type="Method">public void viewAccepted(View v)</Member>
+        <Member type="Method">public void updateRoles()</Member>
         <Member type="Method">private unclear createSuperGroup()</Member>
+        <Member type="Method">public ArrayList&lt;User&gt; getUsers()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Storage</Name>
         <Access>Public</Access>
-        <Location left="861" top="127" />
-        <Size width="372" height="230" />
+        <Location left="882" top="10" />
+        <Size width="372" height="383" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">private Arraylist&lt;ChatMessage&gt; messages</Member>
-        <Member type="Field">private File messageFile</Member>
-        <Member type="Field">private File groupInfo</Member>
-        <Member type="Method">public void addMessages(ArrayList&lt;ChatMessage&gt; newMessages)</Member>
-        <Member type="Method">public ArrayList&lt;ChatMessage&gt; getMessages(int amount)</Member>
-        <Member type="Method">public ArrayList&lt;ChatMessage&gt; getMessages(LocalDateTime startingTime)</Member>
-        <Member type="Method">public long getSharedKey()</Member>
-        <Member type="Method">public void setSharedKey(long sharedKey)</Member>
+        <Member type="Field">private RandomAccessFile raf</Member>
+        <Member type="Field">private String fileName</Member>
+        <Member type="Field">private static ObjectMapper mapper</Member>
+        <Member type="Field">private boolean isInitialized</Member>
+        <Member type="Method">public void addMessages(ChatMessage[] input)</Member>
+        <Member type="Method">public ArrayList&lt;String&gt; getChatNames(long publicKey, long privateKey)</Member>
+        <Member type="Method">public static void deleteStorage(String fileName)</Member>
+        <Member type="Method">public void initializeStorageFile(long sharedKey, long publicKey, long privateKey)</Member>
+        <Member type="Method">private ChatMessage[] mergeMessages(ChatMessage[] arr1, ChatMessage[] arr2)</Member>
+        <Member type="Method">public void closeStorage()</Member>
+        <Member type="Method">private void getToLineStart()</Member>
+        <Member type="Method">public ChatMessage[] getMessages(int amount)</Member>
+        <Member type="Method">public ChatMessage[] getMessages(LocalDateTime startingTime)</Member>
+        <Member type="Method">public long getSharedKey(long publicKey, long privateKey)</Member>
+        <Member type="Method">public void setSharedKey(long publicKey, long privateKey)</Member>
+        <Member type="Method">public void updateUsers(User[] users)</Member>
         <Member type="Method">public ArrayList&lt;User&gt; getUsers()</Member>
+        <Member type="Method">public boolean isInitialized()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>ChatMessage</Name>
         <Access>Public</Access>
         <Location left="923" top="773" />
-        <Size width="227" height="216" />
+        <Size width="227" height="247" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private LocalDateTime date</Member>
         <Member type="Field">private User user</Member>
@@ -49,33 +64,47 @@
         <Member type="Method">public User getUser()</Member>
         <Member type="Method">public String getContent()</Member>
         <Member type="Method">public void setContent(String content)</Member>
+        <Member type="Method">public void setDate(LocalDateTime date)</Member>
+        <Member type="Method">public void setUser(User user)</Member>
+        <Member type="Method">public String toString()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>User</Name>
         <Access>Public</Access>
         <Location left="1339" top="827" />
-        <Size width="162" height="216" />
+        <Size width="162" height="247" />
         <Collapsed>False</Collapsed>
-        <Member type="Field">private String name</Member>
-        <Member type="Field">private String ip</Member>
-        <Member type="Field">private int role</Member>
+        <Member type="Field">private String username</Member>
+        <Member type="Field">private String adress</Member>
+        <Member type="Field">private Role role</Member>
         <Member type="Method">public String getUsername()</Member>
-        <Member type="Method">public String getIP()</Member>
-        <Member type="Method">public int getRole()</Member>
+        <Member type="Method">public String getAdress()</Member>
+        <Member type="Method">public Role getRole()</Member>
+        <Member type="Method">public void upgradeRole()</Member>
+        <Member type="Method">public void downgradeRole()</Member>
+        <Member type="Method">public void setUsername(String username)</Member>
+        <Member type="Method">public void setAddress(String address)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Stats</Name>
         <Access>Public</Access>
         <Location left="633" top="1426" />
-        <Size width="219" height="216" />
+        <Size width="219" height="281" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public static double getPts(int playerID)</Member>
+        <Member type="Method">public static String getAst(int playerID)</Member>
+        <Member type="Method">public static String getGP(int playerID)</Member>
+        <Member type="Method">public static String getBlk(int playerID)</Member>
+        <Member type="Method">public static String getPlayerName(int playerID)</Member>
         <Member type="Method">public static String getTeam(int playerID)</Member>
         <Member type="Method">public static String getGameState(int gameID)</Member>
         <Member type="Method">public static String getGameScore(int gameID)</Member>
         <Member type="Method">public static String getWinner(int gameID)</Member>
+        <Member type="Method">public static int returnPlayerID(String playerName)</Member>
+        <Member type="Method">private static JSONObject getPlayerStats(int playerID)</Member>
+        <Member type="Method">private static JSONObject gameConnection(int gameID)</Member>
         <Modifier>Static</Modifier>
       </Entity>
       <Entity type="Class">
@@ -91,14 +120,18 @@
         <Name>NewsArticle</Name>
         <Access>Public</Access>
         <Location left="377" top="1148" />
-        <Size width="198" height="196" />
+        <Size width="198" height="264" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private String name</Member>
+        <Member type="Field">private String imgLink</Member>
+        <Member type="Field">private String permaLink</Member>
         <Member type="Field">private String content</Member>
-        <Member type="Field">private LocalDateTime dateOfPublish</Member>
+        <Member type="Field">private String publishDate</Member>
         <Member type="Method">public String getName()</Member>
         <Member type="Method">public String getContent()</Member>
-        <Member type="Method">public LocalDateTime getDate()</Member>
+        <Member type="Method">public String getDate()</Member>
+        <Member type="Method">public String getPermaLink()</Member>
+        <Member type="Method">public String getImgLink()</Member>
         <Member type="Method">public String toString()</Member>
         <Modifier>None</Modifier>
       </Entity>
@@ -106,11 +139,13 @@
         <Name>News</Name>
         <Access>Public</Access>
         <Location left="351" top="862" />
-        <Size width="198" height="216" />
+        <Size width="198" height="175" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private ArrayList&lt;NewsArticle&gt; news</Member>
         <Member type="Method">private void addArticle(NewsArticle n)</Member>
         <Member type="Method">public String getAllNews()</Member>
+        <Member type="Method">public void importNews()</Member>
+        <Member type="Method">public String writeHtml()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -143,13 +178,24 @@
       <Entity type="Class">
         <Name>EncryptionInitiator</Name>
         <Access>Public</Access>
-        <Location left="564" top="196" />
-        <Size width="211" height="145" />
+        <Location left="404" top="70" />
+        <Size width="211" height="332" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private static long publicKey</Member>
         <Member type="Field">private static long privateKey</Member>
+        <Member type="Field">private long sharedKey</Member>
+        <Member type="Field">private long[] keysRecieved</Member>
+        <Member type="Field">private JChannel channel</Member>
+        <Member type="Field">private int numOfUsersCommunicating</Member>
+        <Member type="Field">private int numOfActualUsers</Member>
+        <Member type="Field">private EncryptionInitiatiorListener listener</Member>
         <Member type="Method">public long CreateSharedKey()</Member>
         <Member type="Method">private long getRandomPrimeNumber()</Member>
+        <Member type="Method">public void viewAccepted(View v)</Member>
+        <Member type="Method">public void receive(Message msg)</Member>
+        <Member type="Method">public void setPublicPrivateKey(long publicKeyGiven, long privateKeyGiven)</Member>
+        <Member type="Method">private long[] getRandomPrimeNumberPair()</Member>
+        <Member type="Method">private static long pow(long a, long b)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -164,17 +210,19 @@
       <Entity type="Class">
         <Name>SynchronizationProtocolMessage</Name>
         <Access>Public</Access>
-        <Location left="998" top="1029" />
-        <Size width="273" height="216" />
+        <Location left="998" top="1054" />
+        <Size width="273" height="247" />
         <Collapsed>False</Collapsed>
         <Member type="Field">private LocalDateTime date</Member>
         <Member type="Field">private boolean isRequest</Member>
         <Member type="Field">private ChatMessage[] messages</Member>
         <Member type="Field">private String groupName</Member>
+        <Member type="Field">private User[] users</Member>
         <Member type="Method">public LocalDateTime getDate()</Member>
         <Member type="Method">public boolean isRequest()</Member>
         <Member type="Method">public ChatMessage[] getMessages()</Member>
         <Member type="Method">public String getGroupName()</Member>
+        <Member type="Method">public User[] getUsers()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Comment">
@@ -202,7 +250,7 @@
       </Entity>
       <Entity type="Comment">
         <Text>This class takes a command keyword string and analyzes it to return a HTML string containing the requested statistics.</Text>
-        <Location left="923" top="1287" />
+        <Location left="923" top="1331" />
         <Size width="180" height="93" />
       </Entity>
       <Entity type="Comment">
@@ -210,17 +258,19 @@
  with local messages, sorted by time
 +  getMessages(int amount ): returns the requested amount of messages
 + getMessages(LocalDateTime startingTime): returns the messages sent after the given time</Text>
-        <Location left="1108" top="407" />
+        <Location left="1175" top="416" />
         <Size width="235" height="118" />
       </Entity>
     </Entities>
     <Relationships>
       <Relationship type="Association" first="1" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1027</X>
-          <Y>400</Y>
+          <X>1048</X>
+          <Y>436</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
           <X>866</X>
@@ -230,10 +280,14 @@
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Dependency" first="0" second="11">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
       <Relationship type="Dependency" first="0" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -242,6 +296,8 @@
         </BendPoint>
       </Relationship>
       <Relationship type="Dependency" first="9" second="5">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -254,10 +310,14 @@
         </BendPoint>
       </Relationship>
       <Relationship type="Dependency" first="8" second="10">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
       <Relationship type="Dependency" first="8" second="11">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -265,39 +325,51 @@
           <Y>689</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>615</X>
-          <Y>140</Y>
+          <X>455</X>
+          <Y>14</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Dependency" first="5" second="4">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
       <Relationship type="Association" first="7" second="9">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Association" first="6" second="7">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Association" first="0" second="9">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Association" first="3" second="2">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Association" first="3" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -312,6 +384,8 @@
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Association" first="2" second="0">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -326,6 +400,8 @@
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
       <Relationship type="Dependency" first="0" second="12">
+        <Label>
+        </Label>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
@@ -334,15 +410,17 @@
         </BendPoint>
       </Relationship>
       <Relationship type="Dependency" first="0" second="13">
+        <Label>
+        </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
           <X>836</X>
-          <Y>741</Y>
+          <Y>839</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
           <X>901</X>
-          <Y>1103</Y>
+          <Y>1128</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Comment" first="14" second="12">
@@ -358,7 +436,7 @@
         </BendPoint>
         <BendPoint relativeToStartShape="False">
           <X>1195</X>
-          <Y>1277</Y>
+          <Y>1333</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Comment" first="16" second="3">
@@ -370,7 +448,7 @@
         </BendPoint>
         <BendPoint relativeToStartShape="False">
           <X>1442</X>
-          <Y>1104</Y>
+          <Y>1135</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Comment" first="17" second="11">
@@ -385,12 +463,12 @@
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1172</X>
-          <Y>382</Y>
+          <X>1239</X>
+          <Y>391</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1172</X>
-          <Y>382</Y>
+          <X>1193</X>
+          <Y>418</Y>
         </BendPoint>
       </Relationship>
     </Relationships>
