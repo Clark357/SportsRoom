@@ -15,31 +15,31 @@ public class Parser {
 			case "avgPts":
 				if(commandEndIndex + 1 < message.length())
 					return message.substring(0, commandStartIndex)
-							+ "<b color=\"red\">" + Stats.getPts(Stats.returnPlayerID(parameter)) + "</b color=\"red\">"
+							+ "<b color=\"red\">" + Stats.getPts(Stats.returnPlayerID(parameter)) + "[" + parameter + " average points]"+ "</b color=\"red\">"
 							+ parse(message.substring(commandEndIndex + 1));
 				else return message.substring(0, commandStartIndex)
-						+ "<b color=\"red\">" + Stats.getPts(Stats.returnPlayerID(parameter)) + "</b color=\"red\">";
+						+ "<b color=\"red\">" + Stats.getPts(Stats.returnPlayerID(parameter)) + "[" + parameter + " average points]"+ "</b color=\"red\">";
 			case "avgAst":
 				if(commandEndIndex + 1 < message.length())
 					return message.substring(0, commandStartIndex)
-							+ "<b color=\"red\">" + Stats.getAst(Stats.returnPlayerID(parameter)) + "</b color=\"red\">"
+							+ "<b color=\"red\">" + Stats.getAst(Stats.returnPlayerID(parameter)) + "[" + parameter + " average assists]"+ "</b color=\"red\">"
 							+ parse(message.substring(commandEndIndex + 1));
 				else return message.substring(0, commandStartIndex)
-						+ "<b color=\"red\">" + Stats.getAst(Stats.returnPlayerID(parameter)) + "</b color=\"red\">";
+						+ "<b color=\"red\">" + Stats.getAst(Stats.returnPlayerID(parameter)) + "[" + parameter + " average assists]" + "</b color=\"red\">";
 			case "gamesPlayed":
 				if(commandEndIndex + 1 < message.length())
 					return message.substring(0, commandStartIndex)
-							+ "<b color=\"red\">" + Stats.getGP(Stats.returnPlayerID(parameter)) + "</b color=\"red\">"
+							+ "<b color=\"red\">" + Stats.getGP(Stats.returnPlayerID(parameter)) + "[" + parameter + " games played]" + "</b color=\"red\">"
 							+ parse(message.substring(commandEndIndex + 1));
 				else return message.substring(0, commandStartIndex)
-						+ "<b color=\"red\">" + Stats.getGP(Stats.returnPlayerID(parameter)) + "</b color=\"red\">";
+						+ "<b color=\"red\">" + Stats.getGP(Stats.returnPlayerID(parameter)) + "[" + parameter + " games played]" + "</b color=\"red\">";
 			case "avgBlk":
 				if(commandEndIndex + 1 < message.length())
 					return message.substring(0, commandStartIndex)
-							+ "<b color=\"red\">" + Stats.getBlk(Stats.returnPlayerID(parameter)) + "</b color=\"red\">"
+							+ "<b color=\"red\">" + Stats.getBlk(Stats.returnPlayerID(parameter)) + "[" + parameter + " average blocks]" + "</b color=\"red\">"
 							+ parse(message.substring(commandEndIndex + 1));
 				else return message.substring(0, commandStartIndex)
-						+ "<b color=\"red\">" + Stats.getBlk(Stats.returnPlayerID(parameter)) + "</b color=\"red\">";
+						+ "<b color=\"red\">" + Stats.getBlk(Stats.returnPlayerID(parameter)) + "[" + parameter + " average blocks]" + "</b color=\"red\">";
 			default:
 				return message.substring(0, commandEndIndex + 1)
 						+ parse(message.substring(commandEndIndex + 1));
