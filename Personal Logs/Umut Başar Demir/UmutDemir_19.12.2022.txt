@@ -1,0 +1,4 @@
+19.12.2022
+This week I wrote the main bulk of Storage and all the classes it uses (User, Chatmessage)
+Decided to use RandomAccessFile for writing JSON objects into a file
+We continue to change/ fix our code as we figure out how our code fits together.

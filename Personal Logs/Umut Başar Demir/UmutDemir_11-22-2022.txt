@@ -1,0 +1,6 @@
+11.22.2022
+This week we distributed parts of the project and started working on it. 
+We opened the github repo with class files generated from the uml diagram.
+I learned about how i am going to use Jackson library for implementing storage.
+I also researched how to use maven to handle dependencies.
+ 

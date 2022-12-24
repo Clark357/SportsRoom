@@ -1,0 +1,4 @@
+24.12.2022
+This week was mainly bugfixing and testing out the program.
+I also wrote the Parser class which uses the stats to turn given messages 
+into html compatible strings with bold red parts for stats asked by command keywords.
