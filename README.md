@@ -25,7 +25,9 @@ The links of those news clickable. Agter you click it the real news page will be
 
 Also we have the chat features. First you need to create a Super Group in order to decentralize your chatting experience.
 
-After the creation of your Super Group you can create Channels, Group Chats, and Peer 2 Peer Chats.
+In order to create a chat group between two users you need to know the username and the UUID of the users you want to add. You can get your UUID by opening About menu in the menu bar and then clicking the Copy UUID option. This will copy your UUID to your clipboard.
+
+After the creation of your Super Group you can chat between the users easily.
 
 Lastly, the command keywords. you can integrate real-time data by using command keywords. For example: \avgPts{LeBron James}.
 
@@ -45,3 +47,5 @@ You use that in inplace of the stat itself. Before your message is sent the comm
 - org.jsoup:jsoup
 
 - org.json.simple
+
+Note: You can use IntelliJ IDEA to run the project. By openning it inside the IDE and then adding the dependencies via the pom.xml provided. You need to open multiple applications and this can be done by adding multiple run configurations as Application configuration in the IDE.
