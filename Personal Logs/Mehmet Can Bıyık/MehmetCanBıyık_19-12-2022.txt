@@ -1,0 +1,4 @@
+Week from 19/12/2022 to 24/12/2022
++ Finished the Messenger class and added various functionality to GUI to creating groups easier for end user.
++ Fixed various bugs regarding various classes such as Stats, News, Messenger and GUI.
++ Tested and made sure that the functionalities of decentralized chat worked successfully.
