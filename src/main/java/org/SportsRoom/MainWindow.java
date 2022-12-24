@@ -53,11 +53,11 @@ public class MainWindow extends JFrame{
 //		leave.add("Isaac");
 //		leave.add("Group Chat");
 
-		edit.add(new AbstractAction("Manage Groups") {
-			public void actionPerformed(ActionEvent e) {
-				new ManageGroups(panel.getGroups());
-			}
-		});
+//		edit.add(new AbstractAction("Manage Groups") {
+//			public void actionPerformed(ActionEvent e) {
+//				new ManageGroups(panel.getGroups());
+//			}
+//		});
 		edit.add(leave);
 		bar.add("Edit", edit);
 		setJMenuBar(bar);
@@ -222,7 +222,7 @@ public class MainWindow extends JFrame{
 					if(!UserInput.getText().isEmpty()) {
 						//TODO: Messenger class communication code (Should be encrypted)
 						try{
-							chatMessenger.sendMessage(new ChatMessage(LocalDateTime.now(), u, UserInput.getText()));
+							chatMessenger.sendMessage(new ChatMessage(LocalDateTime.now(), u, Parser.parse(UserInput.getText())));
 							UserInput.setText("");
 						} catch(Exception exception) {
 							System.err.println("Error: Could not send the chat message.");
