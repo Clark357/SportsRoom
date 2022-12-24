@@ -1,7 +1,12 @@
 package org.SportsRoom;
 
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.*;
 
 import org.json.simple.JSONArray;
@@ -30,16 +35,19 @@ public class News {
 
 	public void importNews() {
 		try {
-			URL url = new URL("https://www.nba.com/news");
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.connect();
-			int responseCode = con.getResponseCode();
+			HttpClient con = HttpClient.newBuilder()
+					.version(HttpClient.Version.HTTP_2)
+					.followRedirects(HttpClient.Redirect.NORMAL)
+					.connectTimeout(Duration.ofSeconds(20))
+					.build();
+			HttpResponse<String> response= con.send(HttpRequest.newBuilder(new URI("https://www.nba.com/news")).GET().timeout(Duration.ofMinutes(2)).build(), HttpResponse.BodyHandlers.ofString());
+
+			int responseCode = response.statusCode();
 			if(responseCode != 200){
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
 			}
 			else{
-				Scanner scan = new Scanner(url.openStream());
+				Scanner scan = new Scanner(response.body());
 				StringBuilder htmlString = new StringBuilder();
 				while(scan.hasNextLine()) {
 					htmlString.append(scan.nextLine());
