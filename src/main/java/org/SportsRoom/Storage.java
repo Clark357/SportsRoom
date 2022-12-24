@@ -216,9 +216,8 @@ public class Storage {
 	 */
 	public ChatMessage[] getMessages(int amount) {
 		if(!isInitialized) return null;
-		ArrayList<ChatMessage> output;
+		ChatMessage[] output;
 		String temp;
-		output = new ArrayList<>();
 		try {
 			raf.seek(raf.length() - 1);
 
@@ -231,15 +230,16 @@ public class Storage {
 				}
 				raf.seek(raf.getFilePointer() - temp.length() - 1);
 			}
+			output = new ChatMessage[amount];
 			for(int k = 0; k < amount; k++){
-				ChatMessage tempMessage = mapper.readValue(raf.readLine(), ChatMessage.class);
-				if(k != 0 && tempMessage.getDate().isEqual(output.get(k - 1).getDate())) output.add(tempMessage);
+				output[k] = mapper.readValue(raf.readLine(), ChatMessage.class);
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
+			output = new ChatMessage[amount];
 		}
-		return output.toArray(new ChatMessage[output.size()]);
+		return output;
 	}
 
 
