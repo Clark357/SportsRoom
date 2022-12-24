@@ -1,0 +1,24 @@
+07/12/2022
++ We opened the repo and added the TA and others as collaborators
+
+14/12/2022
++ We agreed to use IntelliJ IDEA because VSCode was becoming a problem for managing dependencies
++ We decided to use a package manager and, therefore, used Maven to manage the dependency problem
+
+17/12/2022
++ We mostly tried to resolve the conflicts that occurred in the project as a result of each others code
++ We agreed to meet again in the following days
+
+19/12/2022
++ We continued to resolve conflicts and fix bugs
+
+20/12/2022
++ We fixed all the bugs we could find and realized that some of the features will not be possible to add in the final product
++ We tried to test and make sure that all the remaining functionalities worked properly
++ We found that statistics and local network communication did not work
+
+21/12/2022
++ We managed to optimize the news page of the program and made some changes to the code to make the presentation easier and quicker to do
+
+24/12/2022
++ We fixed the Stats class and now the statistics feature of the project works
