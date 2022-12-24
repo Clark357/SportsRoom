@@ -1,0 +1,3 @@
+Week from 12/12/2022 to 18/12/2022
++ Added various functionalities to the Messenger class (Implementation is nearly finished) and implemented a listener interface to send the received messages to GUI update.
++ Added menu bar to the main window and added a dialog box implementation to provide group management functionality.
