@@ -4,9 +4,19 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.swing.text.html.HTMLDocument;
+import java.io.IOException;
+import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class Stats {
 
@@ -14,15 +24,18 @@ public class Stats {
 		String urlString = "https://www.balldontlie.io/api/v1/season_averages?player_ids[]=" + playerID;
 		JSONObject jsonObj = new JSONObject();
 		try {
-			URL url = new URL(urlString);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.connect();
-			int responseCode = con.getResponseCode();
+			HttpClient con = HttpClient.newBuilder()
+					.version(HttpClient.Version.HTTP_2)
+					.followRedirects(HttpClient.Redirect.NORMAL)
+					.connectTimeout(Duration.ofSeconds(20))
+					.build();
+			HttpResponse<String> response= con.send(HttpRequest.newBuilder(new URI(urlString)).GET().build(), HttpResponse.BodyHandlers.ofString());
+
+			int responseCode = response.statusCode();
 			if (responseCode != 200) {
 				throw new RuntimeException("HttpResponseCode: " + responseCode);
 			} else {
-				Scanner read = new Scanner(url.openStream());
+				Scanner read = new Scanner(response.body());
 				StringBuilder jsonString = new StringBuilder();
 				while (read.hasNextLine()) {
 					jsonString.append(read.nextLine());
@@ -175,32 +188,33 @@ public class Stats {
 	}
 
 	public static int returnPlayerID(String playerName) {
-		String urlString = "https://www.balldontlie.io/api/v1/players?search=" + playerName;
+		String parsedPlayerName = "";
+		for(String s : playerName.split(" "))
+			parsedPlayerName += s + "+";
+		String urlString = "https://www.balldontlie.io/api/v1/players?search=" + parsedPlayerName.substring(0, Math.max(0,parsedPlayerName.length() - 1));
 		int playerID = -1;
 		try {
-			URL url = new URL(urlString);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
+			HttpClient con = HttpClient.newBuilder()
+					.version(HttpClient.Version.HTTP_2)
+					.followRedirects(HttpClient.Redirect.NORMAL)
+					.connectTimeout(Duration.ofSeconds(20))
+					.build();
+			HttpResponse<String> response= con.send(HttpRequest.newBuilder(new URI(urlString)).GET().timeout(Duration.ofMinutes(2)).build(), HttpResponse.BodyHandlers.ofString());
 
-			playerID = 237;
-
-			//Warning: Does not work
-//			con.connect();
-//			int responseCode = con.getResponseCode();
-//			if (responseCode != 200) {
-//				throw new RuntimeException("HttpResponseCode: " + responseCode);
-//			} else {
-//				Scanner read = new Scanner(url.openStream());
-//				StringBuilder JSONString = new StringBuilder();
-//				while (read.hasNextLine()) {
-//					JSONString.append(read.nextLine());
-//				}
-//				JSONParser parser = new JSONParser();
-//				JSONObject jsonObj = (JSONObject) parser.parse(JSONString.toString());
-//				JSONArray data = (JSONArray) jsonObj.get("data");
-//				jsonObj = (JSONObject) data.get(0);
-//				playerID = (int) jsonObj.get("id");
-//			}
+			if (response.statusCode() != 200) {
+				throw new RuntimeException("HttpResponseCode: " + response.statusCode());
+			} else {
+				Scanner read = new Scanner(response.body());
+				StringBuilder JSONString = new StringBuilder();
+				while (read.hasNextLine()) {
+					JSONString.append(read.nextLine());
+				}
+				JSONParser parser = new JSONParser();
+				JSONObject jsonObj = (JSONObject) parser.parse(JSONString.toString());
+				JSONArray data = (JSONArray) jsonObj.get("data");
+				jsonObj = (JSONObject) data.get(0);
+				playerID = Long.valueOf((long)jsonObj.get("id")).intValue();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
